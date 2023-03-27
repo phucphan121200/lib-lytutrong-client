@@ -21,10 +21,10 @@ position: fixed;
 display: flex;
 justify-content: center;
 background: linear-gradient(
-  rgba(0, 0, 0, 0.4),
-  rgba(0, 0, 0, 0.4)
+  rgba(0, 0, 0, 0.5),
+  rgba(0, 0, 0, 0.5)
 ),
-url("https://www.creativefabrica.com/wp-content/uploads/2021/09/28/Abstract-pastel-background-Graphics-17981189-1-580x387.jpg")
+url("https://static.vecteezy.com/system/resources/previews/002/058/893/original/exotic-tropical-plant-background-free-vector.jpg")
   center;
 align-items: center;
 width: 100%;
@@ -58,7 +58,8 @@ const WrapperImg = styled.div`
   justify-content: center;
   // align-items: center;
   flex-direction: column;
-  background-color: #8FD9D1;
+  background-color: #2E8B57;
+  // background-color: #8FD9D1;
   box-shadow: rgba(0, 0, 0, 0.35) 10px 3px 20px 0px;
   border: none;
   ${mobile({ width: "75%" })}
@@ -91,7 +92,7 @@ const Button = styled.button`
   // width: 100%;
   border: none;
   padding: 15px 20px;
-  background-color: #8FD9D1;
+  background-color: #2E8B57;
   color: white;
   cursor: pointer;
   // margin-bottom: 10px;
@@ -100,10 +101,10 @@ const Button = styled.button`
   border-radius: 5px;
   font-weight: bold;
   font-size: 15px;
-  box-shadow: 0px 8px 0px #339999,0px 8px 2px #222222;
+  box-shadow: 0px 8px 0px #1e5737,0px 8px 2px #222222;
   transition: all 0.2s ease;
   &:hover {
-    box-shadow: 0px 5px 0px #339999,0px 5px 2px #222222;
+    box-shadow: 0px 5px 0px #1e5737,0px 5px 2px #222222;
     margin-top: 3px;
   }
   &:active {
