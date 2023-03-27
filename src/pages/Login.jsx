@@ -1,0 +1,208 @@
+import styled from "styled-components";
+import { mobile } from "../responsive";
+import React, { useState, useContext } from "react";
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { login } from "../context/authAPI/apiCalls";
+import { AuthContext } from "../context/authAPI/AuthContext";
+import Notification from "../components/Notification";
+import login_1 from "../assets/image/login-1.png"
+import Face3Icon from '@mui/icons-material/Face3';
+
+
+const Container = styled.div`
+position: fixed;
+display: flex;
+justify-content: center;
+background: linear-gradient(
+  rgba(0, 0, 0, 0.4),
+  rgba(0, 0, 0, 0.4)
+),
+url("https://www.creativefabrica.com/wp-content/uploads/2021/09/28/Abstract-pastel-background-Graphics-17981189-1-580x387.jpg")
+  center;
+align-items: center;
+width: 100%;
+height: 100%;
+top: 0px;
+left: 0px;
+z-index: 1000;
+`;
+
+const Wrapper = styled.div`
+  width: 30%;
+  height: 70%;
+  // padding: 50px 50px;
+  display: flex;
+  border-radius: 20px 0px 0px 20px;
+  // justify-content: center;
+  // // align-items: center;
+  flex-direction: column;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border: none;
+  ${mobile({ width: "75%" })}
+`;
+
+const WrapperImg = styled.div`
+  width: 30%;
+  height: 70%;
+  // padding: 50px 50px;
+  display: flex;
+  border-radius: 0px 20px 20px 0px;
+  justify-content: center;
+  // align-items: center;
+  flex-direction: column;
+  background-color: #8FD9D1;
+  box-shadow: rgba(0, 0, 0, 0.35) 10px 3px 20px 0px;
+  border: none;
+  ${mobile({ width: "75%" })}
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: bold;
+  // padding-bottom: 40px;
+  margin: 80px 0px 0px 30px;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const InputUI = styled.input`
+  flex: 1;
+  min-width: 40%;
+  margin: 10px 0;
+  padding: 10px;
+`;
+
+const Button = styled.button`
+  // width: 100%;
+  border: none;
+  padding: 15px 20px;
+  background-color: #8FD9D1;
+  color: white;
+  cursor: pointer;
+  // margin-bottom: 10px;
+  margin-left: 30px;
+  margin-right: 30px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 15px;
+  box-shadow: 0px 8px 0px #339999,0px 8px 2px #222222;
+  transition: all 0.2s ease;
+  &:hover {
+    box-shadow: 0px 5px 0px #339999,0px 5px 2px #222222;
+    margin-top: 3px;
+  }
+  &:active {
+    box-shadow: none;
+    margin-top: 8px;
+  }
+`;
+
+const Link = styled.a`
+  margin: 5px 0px;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
+const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const { isFetching, dispatch } = useContext(AuthContext);
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
+
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   login({ phone, password }, dispatch, setNotify);
+  // };
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    login({ phone, password }, dispatch, setNotify);
+  };
+
+  return (
+    <Container>
+      <Wrapper>
+        {/* <div style={{width: "80%", height: "100%", display: "flex", alignItems: "center", f}}> */}
+        {/* <div style={{ marginBottom: "30px" }}>THƯ VIỆN</div> */}
+        <Title>Chào mừng!</Title>
+        <Form>
+          {/* <h4 style={{fontWeight: 300, marginBottom: "3px"}}>Số điện thoại</h4> */}
+          <TextField
+            // fullWidth
+            required
+            size='small'
+            name='issuingcompany'
+            id="outlined-required"
+            // placeholder="Điền số điện thoại của bạn"
+            label="Số điện thoại"
+            sx={{
+              '& > :not(style)': { marginRight: "30px", marginLeft: "30px" },
+            }}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <FormControl sx={{ margin: "30px" }}
+            variant="outlined"
+            size="small"
+            id="outlined-required"
+            required
+            // fullWidth
+            onChange={(e) => setPassword(e.target.value)}>
+            <InputLabel htmlFor="outlined-adornment-password">Mật khẩu</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              type={showPassword ? 'text' : 'password'}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="password"
+            />
+          </FormControl>
+          <Button onClick={handleLogin} > ĐĂNG NHẬP</Button>
+        </Form>
+      </Wrapper>
+      <WrapperImg>
+        <img src={login_1} alt="" />
+      </WrapperImg>
+      <Notification
+        notify={notify}
+        setNotify={setNotify}
+      />
+    </Container>
+
+  );
+};
+
+export default Login;
