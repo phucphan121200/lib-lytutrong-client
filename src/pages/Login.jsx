@@ -40,8 +40,8 @@ const Wrapper = styled.div`
   // padding: 50px 50px;
   display: flex;
   border-radius: 20px 0px 0px 20px;
-  // justify-content: center;
-  // // align-items: center;
+  
+  // align-items: center;
   flex-direction: column;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -72,9 +72,12 @@ const Title = styled.h1`
 `;
 
 const Form = styled.form`
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  margin-top: 60px;
+  justify-content: start;
 `;
 
 const InputUI = styled.input`
@@ -146,11 +149,8 @@ const Login = () => {
   return (
     <Container>
       <Wrapper>
-        {/* <div style={{width: "80%", height: "100%", display: "flex", alignItems: "center", f}}> */}
-        {/* <div style={{ marginBottom: "30px" }}>THƯ VIỆN</div> */}
         <Title>Chào mừng!</Title>
         <Form>
-          {/* <h4 style={{fontWeight: 300, marginBottom: "3px"}}>Số điện thoại</h4> */}
           <TextField
             // fullWidth
             required

@@ -11,8 +11,10 @@ import { getListBook } from "../context/bookAPI/apiCalls";
 import { AuthContext } from "../context/authAPI/AuthContext";
 import { getListBanner } from "../context/bannerAPI/apiCalls";
 import LoadingCircle from "../components/loadingCircle/LoadingCircle";
+import { getListCategory } from "../context/categoryAPI/apiCalls";
+import LoadingPage from "../components/loadingPage/LoadingPage"
 
-const Home = ({user}) => {
+const Home = ({ user }) => {
   const [cart, setCart] = useState("")
   const [book, setBook] = useState("")
   // const { user } = useContext(AuthContext)
@@ -21,7 +23,9 @@ const Home = ({user}) => {
     message: "",
     type: "",
   });
+  const [categories, getCategories] = useState("")
   const [sliderItems, setSlideItems] = useState([]);
+  const [test, setTest] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -31,27 +35,33 @@ const Home = ({user}) => {
       setBook(book?.data?.data)
       const bannerList = await getListBanner(setNotify)
       setSlideItems(bannerList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
+      const cateList = await getListCategory(setNotify)
+      getCategories(cateList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
     })()
     return;
   }, [])
   return (
     <div>
-      <Navbar cart={cart} user={user}/>
-      <Announcement />
       {
-        sliderItems ?
-          sliderItems.length != 0 ?
-            <Slider sliderItems={sliderItems} />
-            :
-            <LoadingCircle />
+        sliderItems && categories && book ?
+          <>
+            < Navbar cart={cart} user={user} />
+            <Announcement />
+            {
+              sliderItems.length != 0 ?
+                <Slider sliderItems={sliderItems} />
+                :
+                <LoadingCircle />
+            }
+            <Categories categories={categories} />
+            <Products setCart={setCart} books={book} query="" user={user} />
+            {/* <Newsletter /> */}
+            <Footer />
+          </>
           :
-          <></>
+          <LoadingPage />
       }
-      <Categories />
-      <Products setCart={setCart} books={book} query="" user={user}/>
-      {/* <Newsletter /> */}
-      <Footer />
-    </div>
+    </div >
   );
 };
 

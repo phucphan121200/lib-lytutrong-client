@@ -16,7 +16,7 @@ import PopupUserInfo from "./popup/PopupUserInfo";
 const ContainerAnounce = styled.div`
   width: 100%;
   height: 30px;
-  background-color: #8FD9D1;
+  background-color: #2E8B57;
   color: white;
   display: flex;
   align-items: center;
@@ -153,10 +153,10 @@ const Navbar = ({ cart, user }) => {
           </Center>
           <Right>
             {
-              user && cart ?
+              user ?
                 <MenuItem>
                   <Link to="/cart" style={{ textDecoration: "none", color: "black" }}>
-                    <Badge badgeContent={cart ? cart.reduce((pre, cur) => { return pre + cur.amount }, 0): 0} color="info" style={{ marginRight: "20px" }} max={99}>
+                    <Badge badgeContent={cart ? cart?.reduce((pre, cur) => { return pre + cur.amount }, 0): 0} color="info" style={{ marginRight: "20px" }} max={99}>
                       <ShoppingCartOutlined />
                     </Badge>
                   </Link>

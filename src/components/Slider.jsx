@@ -43,7 +43,7 @@ const Wrapper = styled.div`
 
 const Slide = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   align-items: center;
   background-color: #${(props) => props.bg};
@@ -76,9 +76,9 @@ const Desc = styled.p`
 `;
 
 const Button = styled.a`
-  color: #000;
+  color: #2E8B57;
   text-decoration: none;
-  border: 2px solid #000;
+  border: 2px solid #2E8B57;
   padding: 10px 20px;
   font-size: 20px;
   transition: color 0.4s linear;
@@ -94,7 +94,7 @@ const Button = styled.a`
     top: 0;
     width: 100%;
     height: 100%;
-    background: #000;
+    background: #2E8B57;
     // background: #8FD9D1;
     z-index: -1;
     transition: transform 0.5s;
@@ -123,17 +123,10 @@ const Slider = ({ sliderItems }) => {
     }
   };
 
-  // useEffect(async () => {
-  //   setInterval(() => { setSlideIndex(item => item < (sliderItems.length - 1) ? item + 1 : 0) }, 5000)
-  // }, [])
+  useEffect(async () => {
+    setInterval(() => { setSlideIndex(item => item < (sliderItems.length - 1) ? item + 1 : 0) }, 10000)
+  }, [])
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const cateList = await getListCategory(setNotify)
-  //     getCategories(cateList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
-  //   })()
-  //   return;
-  // }, [])
 
   return (
     <Container>
