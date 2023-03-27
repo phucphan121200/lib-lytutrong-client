@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { popularProducts } from "../data";
 import Product from "./Product";
 import React, { useState, useEffect } from "react";
 import { getListBook, getallBookClient, filterBookClient } from "../context/bookAPI/apiCalls";

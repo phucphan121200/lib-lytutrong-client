@@ -2,7 +2,6 @@ import { ArrowLeftOutlined, ArrowRightOutlined } from "@material-ui/icons";
 import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
-import { sliderItems } from "../data";
 import { mobile } from "../responsive";
 import { Link } from "react-router-dom";
 import { getListBanner } from "../context/bannerAPI/apiCalls";
