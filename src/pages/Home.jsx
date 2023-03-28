@@ -46,7 +46,7 @@ const Home = () => {
   return (
     <div>
       {
-        user && sliderItems && categories && book ?
+        sliderItems && categories && book ?
           <>
             < Navbar cart={cart} user={user} />
             {/* <Announcement /> */}
