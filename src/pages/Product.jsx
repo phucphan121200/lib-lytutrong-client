@@ -12,7 +12,9 @@ import { addToCart } from "../context/cartAPI/apiCalls"
 import Notification from "../components/Notification";
 import { Chip } from "@mui/material";
 import { getUserCart } from "../context/cartAPI/apiCalls"
+import { getUser } from "../context/userAPI/apiCalls"
 import { Link } from "react-router-dom";
+import LoadingPage from "../components/loadingPage/LoadingPage"
 
 const Container = styled.div``;
 
@@ -141,8 +143,9 @@ const Button404 = styled.button`
   cursor: pointer;
 `;
 
-const Product = ({user}) => {
+const Product = () => {
   const location = useLocation();
+  const [user, setUser] = useState("")
   const [path, bookId] = location.pathname.split("/books/");
   const [book, setBook] = useState("")
   const [quantity, setQuantity] = useState(1)
@@ -155,6 +158,8 @@ const Product = ({user}) => {
 
   useEffect(() => {
     (async () => {
+      const UserInfo = await getUser(setNotify)
+      setUser(UserInfo?.data?.data)
       const book = await getBook(bookId, setNotify)
       setBook(book?.data?.data)
       const UserCart = await getUserCart(setNotify)
@@ -195,70 +200,76 @@ const Product = ({user}) => {
     }
 
   }
-
+  console.log(book)
   return (
-    <Container>
-      <Navbar cart={cart} user={user}/>
+    <div>
       {
         book ?
-          <Wrapper>
-            <ImgContainer>
-              <Image src={book.image} />
-            </ImgContainer>
-            <InfoContainer>
-              <Title>{book.name}</Title>
-              <Desc>
-                <b>Tác giả:</b> {book.translator}
-              </Desc>
-              <Desc>
-                <b>Năm xuất bản:</b> {book.publicationdate}
-              </Desc>
-              <Desc>
-                <b>Nhà xuất bản:</b> {book.issuingcompany}
-              </Desc>
-              <Desc>
-                <b>Số trang:</b> {book.numberofpages}
-              </Desc>
-              <Desc>
-                <b>Thể loại:</b>
-                {
-                  book?.categoryItems?.map(item => {
-                    return (<Chip style={{ marginLeft: "10px", fontSize: "20px" }} label={item.categoryId.name} color="success" />)
-                  })
-                }
-              </Desc>
-              <Desc>
-                <b>Số lượng có thể mượn:</b> {book.authStock}
-              </Desc>
-              <AddContainer>
-                <AmountContainer>
-                  <Remove style={{ cursor: "pointer" }} onClick={() => handleQuantity("dec")} />
-                  <Amount>{quantity}</Amount>
-                  <Add style={{ cursor: "pointer" }} onClick={() => handleQuantity("asc")} />
-                </AmountContainer>
-                <Button onClick={async () => {
-                  await addToCart(book._id, quantity, setNotify); const UserCart = await getUserCart(setNotify)
-                  setCart(UserCart?.data?.data?.cartItems)
-                }}>THÊM VÀO TỦ SÁCH</Button>
-              </AddContainer>
-            </InfoContainer>
-          </Wrapper>
-          :
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", marginTop: "30px", marginBottom: "15px" }}>
-            <img src="https://firebasestorage.googleapis.com/v0/b/lib-lututrong.appspot.com/o/lib-lytutrong167899844995032729?alt=media&token=5352a6c0-b24b-4074-81c7-b44c88389e54" alt="" />
-            <Link to="/" style={{ textDecoration: "none", color: "black" }} >
-              <Button404>VỀ TRANG CHỦ</Button404>
-            </Link>
-          </div>
-      }
+          <Container>
+            <Navbar cart={cart} user={user} />
+            {
+              book.length != 0 ?
+                <Wrapper>
+                  <ImgContainer>
+                    <Image src={book.image} />
+                  </ImgContainer>
+                  <InfoContainer>
+                    <Title>{book.name}</Title>
+                    <Desc>
+                      <b>Tác giả:</b> {book.translator}
+                    </Desc>
+                    <Desc>
+                      <b>Năm xuất bản:</b> {book.publicationdate}
+                    </Desc>
+                    <Desc>
+                      <b>Nhà xuất bản:</b> {book.issuingcompany}
+                    </Desc>
+                    <Desc>
+                      <b>Số trang:</b> {book.numberofpages}
+                    </Desc>
+                    <Desc>
+                      <b>Thể loại:</b>
+                      {
+                        book?.categoryItems?.map(item => {
+                          return (<Chip style={{ marginLeft: "10px", fontSize: "20px" }} label={item.categoryId.name} color="success" />)
+                        })
+                      }
+                    </Desc>
+                    <Desc>
+                      <b>Số lượng có thể mượn:</b> {book.authStock}
+                    </Desc>
+                    <AddContainer>
+                      <AmountContainer>
+                        <Remove style={{ cursor: "pointer" }} onClick={() => handleQuantity("dec")} />
+                        <Amount>{quantity}</Amount>
+                        <Add style={{ cursor: "pointer" }} onClick={() => handleQuantity("asc")} />
+                      </AmountContainer>
+                      <Button onClick={async () => {
+                        await addToCart(book._id, quantity, setNotify); const UserCart = await getUserCart(setNotify)
+                        setCart(UserCart?.data?.data?.cartItems)
+                      }}>THÊM VÀO TỦ SÁCH</Button>
+                    </AddContainer>
+                  </InfoContainer>
+                </Wrapper>
+                :
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", marginTop: "30px", marginBottom: "15px" }}>
+                  <img src="https://firebasestorage.googleapis.com/v0/b/lib-lututrong.appspot.com/o/Untitled.png?alt=media&token=7130c7f3-dc53-4e77-a64e-908ae6f6e402" alt="" />
+                  <Link to="/" style={{ textDecoration: "none", color: "black" }} >
+                  </Link>
+                </div>
+            }
 
-      {/* <Newsletter /> */}
-      <Notification
-        notify={notify}
-        setNotify={setNotify}
-      />
-      <Footer />
-    </Container>
+            {/* <Newsletter /> */}
+            <Notification
+              notify={notify}
+              setNotify={setNotify}
+            />
+            <Footer />
+          </Container>
+          :
+          <LoadingPage />
+      }
+    </div>
   );
 };
 

@@ -14,6 +14,7 @@ import { AuthContext } from "../context/authAPI/AuthContext";
 import { addToCart } from "../context/cartAPI/apiCalls"
 import Notification from "./Notification";
 import { getUserCart } from "../context/cartAPI/apiCalls"
+import { scence_1 } from "../responsive";
 
 
 const Info = styled.div`
@@ -28,15 +29,20 @@ const Info = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.5s ease;
-  cursor: pointer;
+  transition: all 0.3s ease;
+`;
+
+const Image = styled.img`
+  height: 75%;
+  z-index: 2;
+  object-fit: cover;
+  width: 55%;
+  transition: all 0.3s ease;
 `;
 
 const Container = styled.div`
-  flex: 1;
   margin: 10px;
-  min-width: 280px;
-  max-width: 350px;
+  width: calc(25% - 20px);
   height: 350px;
   display: flex;
   align-items: center;
@@ -47,6 +53,11 @@ const Container = styled.div`
   &:hover ${Info}{
     opacity: 1;
   }
+  &:hover ${Image}{
+    height: 85%;
+    width: 65%;
+  }
+  ${scence_1({width: "307px" })}
 `;
 
 const Circle = styled.div`
@@ -57,12 +68,6 @@ const Circle = styled.div`
   position: absolute;
 `;
 
-const Image = styled.img`
-  height: 75%;
-  z-index: 2;
-  object-fit: cover;
-  width: 50%;
-`;
 
 const Icon = styled.div`
   width: 40px;
@@ -73,6 +78,7 @@ const Icon = styled.div`
   align-items: center;
   justify-content: center;
   margin: 10px;
+  cursor: pointer;
   transition: all 0.5s ease;
   &:hover {
     background-color: #e9f5f5;

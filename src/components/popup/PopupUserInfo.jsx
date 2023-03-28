@@ -28,8 +28,8 @@ const PopupUserInfo = ({ setOpenModal, user, setNoti }) => {
     };
     const [password, setPassword] = useState("");
     const { isFetching, dispatch } = useContext(AuthContext);
-    const [userdata, setUserData] = useState(user.user)
-    const [url, setUrl] = useState(user.user.image)
+    const [userdata, setUserData] = useState(user)
+    const [url, setUrl] = useState(user.image)
     const [image, setImage] = useState(null)
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordNew, setShowPasswordNew] = useState(false);
@@ -86,15 +86,15 @@ const PopupUserInfo = ({ setOpenModal, user, setNoti }) => {
     }
 
     return (
-        <div className="modalBackground">
-            <div className="modalContainer">
+        <div className="modalBackgroundInfo">
+            <div className="modalContainerInfo">
                 <TabContext value={valueTab}>
                     <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                         <Tab icon={<PersonPinIcon />} label={"Thông tin cá nhân"} value="1" />
                         <Tab icon={<KeyIcon />} label={"Thay đổi mật khẩu"} value="2" />
                     </TabList>
                     <TabPanel value={"1"} index={0} sx={{ padding: "0px" }}>
-                        <div className='body'>
+                        <div className='bodyUser'>
                             <div className='info'
                             // style={{display: "flex"}}
                             >
@@ -116,7 +116,7 @@ const PopupUserInfo = ({ setOpenModal, user, setNoti }) => {
                                                 id="outlined-required"
                                                 label="Họ và Tên"
                                                 name='name'
-                                                defaultValue={user.user.name}
+                                                defaultValue={user.name}
                                                 onChange={handleChange}
                                                 sx={{
                                                     '& > :not(style)': { marginLeft: "20px", width: "160px" },
@@ -130,7 +130,7 @@ const PopupUserInfo = ({ setOpenModal, user, setNoti }) => {
                                                 id="outlined-required"
                                                 label="Số điện thoại"
                                                 name='phone'
-                                                defaultValue={user.user.phone}
+                                                defaultValue={user.phone}
                                                 onChange={handleChange}
                                                 sx={{
                                                     '& > :not(style)': { marginLeft: "20px", marginTop: "30px", width: "160px" },
@@ -153,7 +153,7 @@ const PopupUserInfo = ({ setOpenModal, user, setNoti }) => {
                             </button>
                             <button
                                 onClick={() => {
-                                    handleUpdate(user.user._id, userdata, 
+                                    handleUpdate(user._id, userdata, 
                                         // dispatch, 
                                         setNoti, setOpenModal)
                                 }}

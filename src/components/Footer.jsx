@@ -32,7 +32,7 @@ const SocialContainer = styled.div`
   display: flex;
 `;
 
-const SocialIcon = styled.div`
+const SocialIcon = styled.a`
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -62,9 +62,11 @@ const List = styled.ul`
   flex-wrap: wrap;
 `;
 
-const ListItem = styled.li`
+const ListItem = styled.a`
   width: 50%;
   margin-bottom: 10px;
+  text-decoration: none;
+  color: #000;
 `;
 
 const Right = styled.div`
@@ -93,10 +95,13 @@ const Footer = () => {
         Một thư viện là một kho sưu tập các nguồn thông tin, được chọn lựa bởi các chuyên gia và có thể được tiếp cận để tham khảo hay mượn, thường là trong một môi trường yên tĩnh phù hợp cho học tập.
         </Desc>
         <SocialContainer>
-          <SocialIcon color="3B5999">
+          <SocialIcon
+          color="3B5999"
+          href="https://www.facebook.com/lytutrongvungtau"
+          target="_blank">
             <Facebook />
           </SocialIcon>
-          <SocialIcon color="E4405F">
+          {/* <SocialIcon color="E4405F">
             <Instagram />
           </SocialIcon>
           <SocialIcon color="55ACEE">
@@ -104,22 +109,30 @@ const Footer = () => {
           </SocialIcon>
           <SocialIcon color="E60023">
             <Pinterest />
-          </SocialIcon>
+          </SocialIcon> */}
         </SocialContainer>
       </Left>
       <Center>
         <Title>Đường dẫn nhanh</Title>
         <List>
-          <ListItem>Trang chủ mượn sách</ListItem>
-          <ListItem>Trang quản lý sách</ListItem>
-          <ListItem>Danh sách đầu sách</ListItem>
-          <ListItem>Woman Fashion</ListItem>
-          <ListItem>Accessories</ListItem>
+          <ListItem
+          href="https://thuvienlytutrong.netlify.app/"
+          >Trang chủ mượn sách</ListItem>
+          <ListItem
+          href="https://quanly-thuvienlytutrong.netlify.app/"
+          >Trang quản lý sách</ListItem>
+          <ListItem
+          href="https://thuvienlytutrong.netlify.app/books/"
+          >Danh sách đầu sách</ListItem>
+          <ListItem
+          href="https://thuvienlytutrong.netlify.app/cart/"
+          >Tủ sách của bạn</ListItem>
+          {/* <ListItem>Accessories</ListItem>
           <ListItem>My Account</ListItem>
           <ListItem>Order Tracking</ListItem>
           <ListItem>Wishlist</ListItem>
           <ListItem>Wishlist</ListItem>
-          <ListItem>Terms</ListItem>
+          <ListItem>Terms</ListItem> */}
         </List>
       </Center>
       <Right>

@@ -13,7 +13,6 @@ import { login } from "../context/authAPI/apiCalls";
 import { AuthContext } from "../context/authAPI/AuthContext";
 import Notification from "../components/Notification";
 import login_1 from "../assets/image/login-1.png"
-import Face3Icon from '@mui/icons-material/Face3';
 
 
 const Container = styled.div`
@@ -90,8 +89,8 @@ const InputUI = styled.input`
 
 const Button = styled.button`
   // width: 100%;
+  height: 50px;
   border: none;
-  padding: 15px 20px;
   background-color: #2E8B57;
   color: white;
   cursor: pointer;
@@ -120,10 +119,36 @@ const Link = styled.a`
   cursor: pointer;
 `;
 
+const Loader = styled.div`
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border: 5px solid #fff;
+    border-top-color: #B2B2B2;
+    border-radius: 50%;
+    animation: loading 0.75s ease infinite;
+  }
+  @keyframes loading {
+    from {
+      transform: rotate(0turn)
+    }
+    to {
+      transform: rotate(1turn)
+    }
+  }
+`;
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { isFetching, dispatch } = useContext(AuthContext);
   const [notify, setNotify] = useState({
     isOpen: false,
@@ -142,9 +167,11 @@ const Login = () => {
     event.preventDefault();
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    login({ phone, password }, dispatch, setNotify);
+    setLoading(true);
+    await login({ phone, password }, dispatch, setNotify);
+    setLoading(false);
   };
 
   return (
@@ -191,7 +218,16 @@ const Login = () => {
               label="password"
             />
           </FormControl>
-          <Button onClick={handleLogin} > ĐĂNG NHẬP</Button>
+          <Button onClick={handleLogin} >
+            {
+              loading ?
+                <Loader />
+                :
+                <p style={{ fontSize: "15px" }}>
+                  ĐĂNG NHẬP
+                </p>
+            }
+          </Button>
         </Form>
       </Wrapper>
       <WrapperImg>

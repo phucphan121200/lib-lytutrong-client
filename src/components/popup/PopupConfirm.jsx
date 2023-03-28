@@ -4,7 +4,7 @@ import "./popupConfirm.scss"
 import { getUserCart, removeFromCart, CancelOrder, getWaitotConfirmUser } from "../../context/cartAPI/apiCalls"
 
 
-const PopupConfirm = ({ setOpenModal, title, id, data, amount, isPopup, setNoti, setDataUser }) => {
+const PopupConfirm = ({ setOpenModal, title, id, user, data, amount, isPopup, setNoti, setDataUser }) => {
     return (
         <div className="modalBackgroundConfirmPopup">
             <div className="modalContainerr">
@@ -40,7 +40,7 @@ const PopupConfirm = ({ setOpenModal, title, id, data, amount, isPopup, setNoti,
                     {
                         isPopup == 2 ?
                             <button onClick={async () => {
-                                await CancelOrder(id, data, amount, setNoti)
+                                await CancelOrder(id, user, data, amount, setNoti)
                                 const bookList = await getWaitotConfirmUser(setNoti)
                                 setDataUser(bookList?.data?.data?.cartItems)
                                 setOpenModal(false)

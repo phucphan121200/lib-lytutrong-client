@@ -22,7 +22,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import { useLocation } from "react-router-dom";
 import LoadingCircle from "../components/loadingCircle/LoadingCircle";
 import Pagination from '@mui/material/Pagination';
-import { AuthContext } from "../context/authAPI/AuthContext";
+import { getUser } from "../context/userAPI/apiCalls"
 
 const Container = styled.div``;
 
@@ -54,8 +54,7 @@ const SelectTemp = styled.select`
 `;
 const Option = styled.option``;
 
-const ProductList = ({ user }) => {
-  // const { user } = useContext(AuthContext)
+const ProductList = () => {
   const [cate, setCate] = useState("")
   const [book, setBook] = useState("")
   const [query, setQuery] = useState("")
@@ -64,6 +63,7 @@ const ProductList = ({ user }) => {
     message: "",
     type: "",
   });
+  const [user, setUser] = useState("")
   const [currentPage, setcurrentPage] = useState(1)
   const [postPerPage, setpostPerPage] = useState(12)
   const location = useLocation()
@@ -86,6 +86,8 @@ const ProductList = ({ user }) => {
 
   useEffect(() => {
     (async () => {
+      const UserInfo = await getUser(setNotify)
+      setUser(UserInfo?.data?.data)
       const book = await filterBookClient(age, setNotify)
       setBook(book?.data?.data)
       const UserCart = await getUserCart(setNotify)

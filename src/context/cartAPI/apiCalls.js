@@ -147,9 +147,9 @@ export const removeFromCart = async (data, setNotify) => {
     }
 }
 
-export const CancelOrder = async (id, data, amount, setNotify) => {
+export const CancelOrder = async (id, user, data, amount, setNotify) => {
     try {
-        const res = await axios.put(BACK_END_URL + "/carts/cancelBook/" + id, { cartItems: [{ bookId: data, amount: amount }] }, {
+        const res = await axios.put(BACK_END_URL + "/carts/cancelBook/" + id, { userBorrowInfo: user, cartItems: [{ bookId: data, amount: amount }] }, {
             headers: {
                 token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
             },

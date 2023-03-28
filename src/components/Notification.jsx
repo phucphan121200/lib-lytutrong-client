@@ -29,10 +29,12 @@ export default function Notification(props) {
             open={notify.isOpen}
             autoHideDuration={3000}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            onClose={handleClose}>
+            onClose={handleClose}
+            >
             <Alert
                 severity={notify.type}
-                onClose={handleClose}>
+                // onClose={handleClose}
+                >
                 {notify.message}
             </Alert>
         </Snackbar>

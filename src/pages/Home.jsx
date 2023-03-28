@@ -6,6 +6,7 @@ import Newsletter from "../components/Newsletter";
 import Products from "../components/Products";
 import Slider from "../components/Slider";
 import { getUserCart } from "../context/cartAPI/apiCalls"
+import { getUser } from "../context/userAPI/apiCalls"
 import React, { useEffect, useState, useContext } from "react";
 import { getListBook } from "../context/bookAPI/apiCalls";
 import { AuthContext } from "../context/authAPI/AuthContext";
@@ -14,8 +15,9 @@ import LoadingCircle from "../components/loadingCircle/LoadingCircle";
 import { getListCategory } from "../context/categoryAPI/apiCalls";
 import LoadingPage from "../components/loadingPage/LoadingPage"
 
-const Home = ({ user }) => {
+const Home = () => {
   const [cart, setCart] = useState("")
+  const [user, setUser] = useState("")
   const [book, setBook] = useState("")
   // const { user } = useContext(AuthContext)
   const [notify, setNotify] = useState({
@@ -25,12 +27,13 @@ const Home = ({ user }) => {
   });
   const [categories, getCategories] = useState("")
   const [sliderItems, setSlideItems] = useState([]);
-  const [test, setTest] = useState(null);
 
   useEffect(() => {
     (async () => {
       const UserCart = await getUserCart(setNotify)
       setCart(UserCart?.data?.data?.cartItems)
+      const UserInfo = await getUser(setNotify)
+      setUser(UserInfo?.data?.data)
       const book = await getListBook(setNotify)
       setBook(book?.data?.data)
       const bannerList = await getListBanner(setNotify)
@@ -43,10 +46,10 @@ const Home = ({ user }) => {
   return (
     <div>
       {
-        sliderItems && categories && book ?
+        user && sliderItems && categories && book ?
           <>
             < Navbar cart={cart} user={user} />
-            <Announcement />
+            {/* <Announcement /> */}
             {
               sliderItems.length != 0 ?
                 <Slider sliderItems={sliderItems} />

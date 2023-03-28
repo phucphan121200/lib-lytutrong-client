@@ -63,3 +63,20 @@ export const handleUpdatePassword = async (data, setNotify, setOpenModal) => {
         });
     }
 };
+
+export const getUser = async (setNotify) => {
+    try {
+        const res = await axios.get(BACK_END_URL +"/users/getuser", {
+            headers: {
+                token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+            },
+        });
+        return res
+    } catch (err) {
+        setNotify({
+            isOpen: true,
+            message: "Lỗi hệ thống: " + err,
+            type: "error",
+        });
+    }
+};

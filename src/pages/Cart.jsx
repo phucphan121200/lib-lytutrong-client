@@ -7,6 +7,7 @@ import { mobile } from "../responsive";
 import React, { useState, useEffect } from "react";
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
+import { getUser } from "../context/userAPI/apiCalls"
 import { Tab, Chip, Tooltip } from "@mui/material";
 import { getUserCart, orderBook, getWaitotConfirmUser, getWaitoBorrowUser, getBorrowingUser, getReturnedUser } from "../context/cartAPI/apiCalls"
 import Checkbox from '@mui/material/Checkbox';
@@ -18,6 +19,7 @@ import PopupConfirm from "../components/popup/PopupConfirm";
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import ReportIcon from '@mui/icons-material/Report';
+import LoadingPage from "../components/loadingPage/LoadingPage"
 
 const Container = styled.div``;
 
@@ -213,7 +215,7 @@ const ButtonCancel = styled.button`
   }
 `;
 
-const Cart = ({ user }) => {
+const Cart = () => {
   const [valueTab, setValueTab] = useState("1")
   const handleChangeTab = async (event, newValue) => {
     setValueTab(newValue);
@@ -223,6 +225,7 @@ const Cart = ({ user }) => {
     message: "",
     type: "",
   });
+  const [user, setUser] = useState("")
   const [userCart, setUserCart] = useState("")
   const [waitotConfirmUser, setWaitotConfirmUser] = useState("")
   const [waitotBorrowUser, setWaitoBorrowUser] = useState("")
@@ -353,6 +356,8 @@ const Cart = ({ user }) => {
       setBorrowingUser(borrowCart?.data?.data?.cartItems?.reverse())
       const returnedCart = await getReturnedUser(setNotify)
       setReturnedUser(returnedCart?.data?.data?.cartItems?.reverse())
+      const UserInfo = await getUser(setNotify)
+      setUser(UserInfo?.data?.data)
     })()
     return;
   }, [])
@@ -382,432 +387,125 @@ const Cart = ({ user }) => {
 
   console.log(bookSelect)
   return (
-    <Container>
-      <Navbar cart={userCart} user={user} />
-      <Announcement />
-      <Wrapper>
-        <Title>TỦ SÁCH CỦA BẠN</Title>
-        <Top>
-          {
-            check == true ?
-              <TopButton type="filled" name="uncheck" onClick={handleClick}>BỎ CHỌN TẤT CẢ</TopButton>
-              :
-              <TopButton type="filled" name="check" onClick={handleClick}>CHỌN TẤT CẢ SÁCH</TopButton>
-          }
+    <div>
+      {
+        user ?
+          <Container>
+            <Navbar cart={userCart} user={user} />
+            <Announcement />
+            <Wrapper>
+              <Title>TỦ SÁCH CỦA BẠN</Title>
+              <Top>
+                {
+                  check == true ?
+                    <TopButton type="filled" name="uncheck" onClick={handleClick}>BỎ CHỌN TẤT CẢ</TopButton>
+                    :
+                    <TopButton type="filled" name="check" onClick={handleClick}>CHỌN TẤT CẢ SÁCH</TopButton>
+                }
 
-          <TopTexts>
-            {
-              userCart && waitotConfirmUser && waitotBorrowUser && borrowingUser && returnedUser ?
-                <TabContext value={valueTab} key={7}>
-                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example" key={6}>
-                    <Tab label={"Đặt sách (" + userCart?.length + ")"} value="1" key={1} />
-                    <Tab label={"Chờ duyệt (" + waitotConfirmUser?.length + ")"} value="2" key={2} />
-                    <Tab label={"Chờ lấy (" + waitotBorrowUser?.length + ")"} value="3" key={3} />
-                    <Tab label={"Đang mượn (" + borrowingUser?.length + ")"} value="4" key={4} />
-                    <Tab label={"Đã trả(" + returnedUser?.length + ")"} value="5" key={5} />
-                  </TabList>
-                </TabContext>
-                :
-                <TabContext value={valueTab} key={7}>
-                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example" key={6}>
-                    <Tab label={"Đặt sách (" + 0 + ")"} value="1" key={1} />
-                    <Tab label={"Chờ duyệt (" + 0 + ")"} value="2" key={2} />
-                    <Tab label={"Chờ lấy (" + 0 + ")"} value="3" key={3} />
-                    <Tab label={"Đang mượn (" + 0 + ")"} value="4" key={4} />
-                    <Tab label={"Đã trả(" + 0 + ")"} value="5" key={5} />
-                  </TabList>
-                </TabContext>
-            }
-          </TopTexts>
-          <TopButton>TIẾP TỤC MƯỢN SÁCH</TopButton>
-        </Top>
-        <Bottom>
-          {
-            valueTab == 1 ?
-              userCart ?
-                userCart?.length != 0 ?
-                  <>
-                    <Info>
-                      {
-                        userCart?.map(item => {
-                          return (
-                            <>
-                              <Product>
-                                <Checkbox
-                                  key={item.bookId}
-                                  checked={item.checked}
-                                  onChange={(e) => checkOrderBook(e, item)}
-                                  sx={{
-                                    color: "black",
-                                    '&.Mui-checked': {
-                                      color: "teal",
-                                    },
-                                    '& .MuiSvgIcon-root': { fontSize: 30 }
-                                  }}
-                                />
-                                <ProductDetail>
-                                  <Image src={item?.bookId?.image} />
-                                  <Details>
-                                    <ProductName>
-                                      <b>Tên sách:</b> {item?.bookId?.name}
-                                    </ProductName>
-                                    <ProductId>
-                                      <b>Tác giả:</b> {item?.bookId?.translator}
-                                    </ProductId>
-                                    <ProductId>
-                                      <b>Nhà xuất bản:</b> {item?.bookId?.issuingcompany}
-                                    </ProductId>
-                                    {/* <ProductColor color="black" /> */}
-                                    <ProductSize>
-                                      <b>Năm xuất bản:</b> {item?.bookId?.publicationdate}
-                                    </ProductSize>
-                                  </Details>
-                                </ProductDetail>
-                                <PriceDetail>
-                                  <ProductAmountContainer>
-                                    <Remove style={{ cursor: "pointer" }} onClick={() => handleQuantity("dec", item?.bookId?._id)} />
-                                    <ProductAmount>{item.amount}</ProductAmount>
-                                    <Add style={{ cursor: "pointer" }} onClick={() => handleQuantity("asc", item?.bookId?._id)} />
-                                  </ProductAmountContainer>
-                                </PriceDetail>
-                                <CancelOutlined style={{ color: "firebrick", marginTop: "5px", marginRight: "5px", fontSize: "30px", cursor: "pointer" }}
-                                  onClick={async () => {
-                                    setModalOpen(true)
-                                    // await removeFromCart(item.bookId._id, setNotify)
-                                    // const UserCart = await getUserCart(setNotify)
-                                    // setUserCart(UserCart?.data?.data)
-                                  }} />
-                              </Product>
-                              <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
-                                {modalOpen &&
-                                  <PopupConfirm
-                                    setOpenModal={setModalOpen}
-                                    title="Bạn có muốn xóa đầu sách này?"
-                                    data={item.bookId._id}
-                                    isPopup={1}
-                                    setNoti={setNotify}
-                                    setDataUser={setUserCart}
-                                  />}
-                              </div>
-                              <Hr />
-                            </>
-                          )
-                        })
-                      }
-                    </Info>
-                    <SummaryBook>
-                      <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
-                      {/* <SummaryItem>
-                      <SummaryItemText>Subtotal</SummaryItemText>
-                      <SummaryItemPrice>$ 80</SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem>
-                      <SummaryItemText>Estimated Shipping</SummaryItemText>
-                      <SummaryItemPrice>$ 5.90</SummaryItemPrice>
-                    </SummaryItem> */}
-                      <SummaryItem>
-                        <SummaryItemText>Số đầu sách đã chọn</SummaryItemText>
-                        <SummaryItemPrice>{bookSelect?.cartItems?.length != 0 ? bookSelect?.cartItems?.length : 0}</SummaryItemPrice>
-                      </SummaryItem>
-                      <SummaryItem type="total">
-                        <SummaryItemText>Số sách mượn</SummaryItemText>
-                        <SummaryItemPrice>{bookSelect?.cartItems?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
-                      </SummaryItem>
-                      <Button style={{ cursor: "pointer" }} onClick={async () => {
-                        await orderBook(bookSelect, setNotify)
-                        const UserCart = await getUserCart(setNotify)
-                        setUserCart(UserCart?.data?.data?.cartItems)
-                        const waittoconfirmCart = await getWaitotConfirmUser(setNotify)
-                        setWaitotConfirmUser(waittoconfirmCart?.data?.data?.cartItems)
-                        setBookSelect({ cartItems: [] })
-                      }}>MƯỢN SÁCH</Button>
-                    </SummaryBook>
-                  </>
-                  :
-                  <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                    <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có đầu sách nào trong tủ sách</div>
-                  </div>
-                :
-                <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                  <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có đầu sách nào trong tủ sách</div>
-                </div>
-              :
-              <></>
-
-          }
-          {
-            valueTab == 2 ?
-              waitotConfirmUser ?
-                waitotConfirmUser?.length != 0 ?
-                  <>
-                    <Info>
-                      {
-                        waitotConfirmUser?.map(item => {
-                          return (
-                            <>
-                              <Product>
-                                <ProductDetail>
-                                  <Image src={item.bookId.image} />
-                                  <Details>
-                                    <ProductName>
-                                      <b>Tên sách:</b> {item.bookId.name}
-                                    </ProductName>
-                                    <ProductId>
-                                      <b>Tác giả:</b> {item.bookId.translator}
-                                    </ProductId>
-                                    <ProductId>
-                                      <b>Số lượng:</b> {item.amount}
-                                    </ProductId>
-                                    <ProductSize>
-                                      <b>Năm xuất bản:</b> {item.bookId.publicationdate}
-                                    </ProductSize>
-                                    {/* <ProductColor color="black" /> */}
-
-                                  </Details>
-                                </ProductDetail>
-                                <PriceDetail>
-                                  <ProductAmountContainer>
-                                    <ProductAmountWait>
-                                      <Tooltip title="Hủy phiên mượn này?" arrow={true}>
-                                        {/* <Chip icon={<FaceIcon />} label="CHỜ DUYỆT" variant="outlined" color="secondary" /> */}
-                                        <ButtonCancel onClick={async () => {
+                <TopTexts>
+                  {
+                    userCart && waitotConfirmUser && waitotBorrowUser && borrowingUser && returnedUser ?
+                      <TabContext value={valueTab} key={7}>
+                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example" key={6}>
+                          <Tab label={"Đặt sách (" + userCart?.length + ")"} value="1" key={1} />
+                          <Tab label={"Chờ duyệt (" + waitotConfirmUser?.length + ")"} value="2" key={2} />
+                          <Tab label={"Chờ lấy (" + waitotBorrowUser?.length + ")"} value="3" key={3} />
+                          <Tab label={"Đang mượn (" + borrowingUser?.length + ")"} value="4" key={4} />
+                          <Tab label={"Đã trả(" + returnedUser?.length + ")"} value="5" key={5} />
+                        </TabList>
+                      </TabContext>
+                      :
+                      <TabContext value={valueTab} key={7}>
+                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example" key={6}>
+                          <Tab label={"Đặt sách (" + 0 + ")"} value="1" key={1} />
+                          <Tab label={"Chờ duyệt (" + 0 + ")"} value="2" key={2} />
+                          <Tab label={"Chờ lấy (" + 0 + ")"} value="3" key={3} />
+                          <Tab label={"Đang mượn (" + 0 + ")"} value="4" key={4} />
+                          <Tab label={"Đã trả(" + 0 + ")"} value="5" key={5} />
+                        </TabList>
+                      </TabContext>
+                  }
+                </TopTexts>
+                <TopButton>TIẾP TỤC MƯỢN SÁCH</TopButton>
+              </Top>
+              <Bottom>
+                {
+                  valueTab == 1 ?
+                    userCart ?
+                      userCart?.length != 0 ?
+                        <>
+                          <Info>
+                            {
+                              userCart?.map(item => {
+                                return (
+                                  <>
+                                    <Product>
+                                      <Checkbox
+                                        key={item.bookId}
+                                        checked={item.checked}
+                                        onChange={(e) => checkOrderBook(e, item)}
+                                        sx={{
+                                          color: "black",
+                                          '&.Mui-checked': {
+                                            color: "teal",
+                                          },
+                                          '& .MuiSvgIcon-root': { fontSize: 30 }
+                                        }}
+                                      />
+                                      <ProductDetail>
+                                        <Image src={item?.bookId?.image} />
+                                        <Details>
+                                          <ProductName>
+                                            <b>Tên sách:</b> {item?.bookId?.name}
+                                          </ProductName>
+                                          <ProductId>
+                                            <b>Tác giả:</b> {item?.bookId?.translator}
+                                          </ProductId>
+                                          <ProductId>
+                                            <b>Nhà xuất bản:</b> {item?.bookId?.issuingcompany}
+                                          </ProductId>
+                                          {/* <ProductColor color="black" /> */}
+                                          <ProductSize>
+                                            <b>Năm xuất bản:</b> {item?.bookId?.publicationdate}
+                                          </ProductSize>
+                                        </Details>
+                                      </ProductDetail>
+                                      <PriceDetail>
+                                        <ProductAmountContainer>
+                                          <Remove style={{ cursor: "pointer" }} onClick={() => handleQuantity("dec", item?.bookId?._id)} />
+                                          <ProductAmount>{item.amount}</ProductAmount>
+                                          <Add style={{ cursor: "pointer" }} onClick={() => handleQuantity("asc", item?.bookId?._id)} />
+                                        </ProductAmountContainer>
+                                      </PriceDetail>
+                                      <CancelOutlined style={{ color: "firebrick", marginTop: "5px", marginRight: "5px", fontSize: "30px", cursor: "pointer" }}
+                                        onClick={async () => {
                                           setModalOpen(true)
                                           // await removeFromCart(item.bookId._id, setNotify)
                                           // const UserCart = await getUserCart(setNotify)
                                           // setUserCart(UserCart?.data?.data)
-                                        }} >HỦY ĐẶT</ButtonCancel>
-                                      </Tooltip>
-                                    </ProductAmountWait>
-                                  </ProductAmountContainer>
-                                  {/* <ProductPrice>$ 30</ProductPrice> */}
-                                </PriceDetail>
-                              </Product>
-                              <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
-                                {modalOpen &&
-                                  <PopupConfirm
-                                    setOpenModal={setModalOpen}
-                                    title="Bạn có muốn hủy phiên mượn này?"
-                                    id={item._id}
-                                    data={item.bookId._id}
-                                    amount={item.amount}
-                                    isPopup={2}
-                                    setNoti={setNotify}
-                                    setDataUser={setWaitotConfirmUser}
-                                  />}
-                              </div>
-                              <Hr />
-                            </>
-                          )
-                        })
-                      }
-                    </Info>
-                    <Summary>
-                      <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
-                      <SummaryItem>
-                        <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
-                        <SummaryItemPrice>{waitotConfirmUser?.length != 0 ? waitotConfirmUser.length : 0}</SummaryItemPrice>
-                      </SummaryItem>
-                      <SummaryItem type="total">
-                        <SummaryItemText>Số sách mượn</SummaryItemText>
-                        <SummaryItemPrice>{waitotConfirmUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
-                      </SummaryItem>
-                    </Summary>
-                  </>
-                  :
-                  <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                    <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ duyệt</div>
-                  </div>
-                :
-                <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                  <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ duyệt</div>
-                </div>
-              :
-              <></>
-          }
-          {
-            valueTab == 3 ?
-              waitotBorrowUser ?
-                waitotBorrowUser?.length != 0 ?
-                  <>
-                    <Info>
-                      {
-                        waitotBorrowUser.map(item => {
-                          return (
-                            <>
-                              <Product>
-                                <ProductDetail>
-                                  <Image src={item.bookId.image} />
-                                  <Details>
-                                    <ProductName>
-                                      <b>Tên sách:</b> {item.bookId.name}
-                                    </ProductName>
-                                    <ProductId>
-                                      <b>Tác giả:</b> {item.bookId.translator}
-                                    </ProductId>
-                                    <ProductId>
-                                      <b>Số lượng:</b> {item.amount}
-                                    </ProductId>
-                                    {/* <ProductColor color="black" /> */}
-                                    <ProductSize>
-                                      <b>Năm xuất bản:</b> {item.bookId.publicationdate}
-                                    </ProductSize>
-                                  </Details>
-                                </ProductDetail>
-                                <PriceDetail>
-                                  <ProductAmountContainer>
-                                    <Tooltip title="Sách đã được duyệt! Hãy đến thư viện để lấy sách!" arrow={true}>
-                                      <Chip icon={<BookmarkAddedIcon />} label="ĐÃ DUYỆT" variant="outlined" color="secondary" />
-                                    </Tooltip>
-                                  </ProductAmountContainer>
-                                </PriceDetail>
-                              </Product>
-                              <Hr />
-                            </>
-                          )
-                        })
-                      }
-                    </Info>
-                    <Summary>
-                      <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
-                      <SummaryItem>
-                        <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
-                        <SummaryItemPrice>{waitotBorrowUser?.length != 0 ? waitotBorrowUser.length : 0}</SummaryItemPrice>
-                      </SummaryItem>
-                      <SummaryItem type="total">
-                        <SummaryItemText>Số sách mượn</SummaryItemText>
-                        <SummaryItemPrice>{waitotBorrowUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
-                      </SummaryItem>
-                    </Summary>
-                  </>
-                  :
-                  <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                    <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ lấy</div>
-                  </div>
-                :
-                <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                  <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ lấy</div>
-                </div>
-              :
-              <></>
-          }
-          {
-            valueTab == 4 ?
-              borrowingUser ?
-                borrowingUser.length != 0 ?
-                  <>
-                    <Info>
-                      {
-                        borrowingUser.map(item => {
-                          return (
-                            <>
-                              <Product>
-                                <ProductDetail>
-                                  <Image src={item.bookId.image} />
-                                  <Details>
-                                    <ProductName>
-                                      <b>Tên sách:</b> {item.bookId.name}
-                                    </ProductName>
-                                    <ProductId>
-                                      <b>Tác giả:</b> {item.bookId.translator}
-                                    </ProductId>
-                                    <ProductId>
-                                      <b>Số lượng:</b> {item.amount}
-                                    </ProductId>
-                                    {/* <ProductColor color="black" /> */}
-                                    <ProductSize>
-                                      <b>Thời gian phải trả sách:</b> {Moment(item.exp).format('HH:mm:ss, DD/MM/YYYY')}
-                                    </ProductSize>
-                                  </Details>
-                                </ProductDetail>
-                                <PriceDetail>
-                                  <ProductAmountContainer>
-                                    {func(item)}
-                                  </ProductAmountContainer>
-                                </PriceDetail>
-                              </Product>
-                              <Hr />
-                            </>
-                          )
-                        })
-                      }
-                    </Info>
-                    <Summary>
-                      <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
-                      <SummaryItem>
-                        <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
-                        <SummaryItemPrice>{borrowingUser?.length != 0 ? borrowingUser.length : 0}</SummaryItemPrice>
-                      </SummaryItem>
-                      <SummaryItem type="total">
-                        <SummaryItemText>Số sách mượn</SummaryItemText>
-                        <SummaryItemPrice>{borrowingUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
-                      </SummaryItem>
-                    </Summary>
-                  </>
-                  :
-                  <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                    <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa mượn quyển sách nào</div>
-                  </div>
-                :
-                <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                  <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa mượn quyển sách nào</div>
-                </div>
-              :
-              <></>
-          }
-          {
-            valueTab == 5 ?
-              returnedUser ?
-                returnedUser.length != 0 ?
-                  <>
-                    <Info>
-                      {
-                        returnedUser.map(item => {
-                          return (
-                            <>
-                              <Product>
-                                <ProductDetail>
-                                  <Image src={item.bookId.image} />
-                                  <Details>
-                                    <ProductName>
-                                      <b>Tên sách:</b> {item.bookId.name}
-                                    </ProductName>
-                                    <ProductId>
-                                      <b>Tác giả:</b> {item.bookId.translator}
-                                    </ProductId>
-                                    <ProductId>
-                                      <b>Số lượng:</b> {item.amount}
-                                    </ProductId>
-                                    {/* <ProductColor color="black" /> */}
-                                    <ProductSize>
-                                      <b>Ngày bạn trả sách</b> {item.timeReturn}
-                                    </ProductSize>
-                                  </Details>
-                                </ProductDetail>
-                                <PriceDetail>
-                                  <ProductAmountContainer>
-                                    <Tooltip title="Bạn đã trả sách thành công!" arrow={true}>
-                                      <Chip icon={<BookmarkAddedIcon />} label="ĐÃ TRẢ" variant="outlined" color="success" />
-                                    </Tooltip>
-                                  </ProductAmountContainer>
-                                </PriceDetail>
-                              </Product>
-                              <Hr />
-                            </>
-                          )
-                        })
-                      }
-                    </Info>
-                    <Summary>
-                      <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
-                      {/* <SummaryItem>
+                                        }} />
+                                    </Product>
+                                    <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
+                                      {modalOpen &&
+                                        <PopupConfirm
+                                          setOpenModal={setModalOpen}
+                                          title="Bạn có muốn xóa đầu sách này?"
+                                          data={item.bookId._id}
+                                          isPopup={1}
+                                          setNoti={setNotify}
+                                          setDataUser={setUserCart}
+                                        />}
+                                    </div>
+                                    <Hr />
+                                  </>
+                                )
+                              })
+                            }
+                          </Info>
+                          <SummaryBook>
+                            <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
+                            {/* <SummaryItem>
                       <SummaryItemText>Subtotal</SummaryItemText>
                       <SummaryItemPrice>$ 80</SummaryItemPrice>
                     </SummaryItem>
@@ -815,38 +513,353 @@ const Cart = ({ user }) => {
                       <SummaryItemText>Estimated Shipping</SummaryItemText>
                       <SummaryItemPrice>$ 5.90</SummaryItemPrice>
                     </SummaryItem> */}
-                      <SummaryItem>
-                        <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
-                        <SummaryItemPrice>{returnedUser?.length != 0 ? returnedUser.length : 0}</SummaryItemPrice>
-                      </SummaryItem>
-                      <SummaryItem type="total">
-                        <SummaryItemText>Số sách mượn</SummaryItemText>
-                        <SummaryItemPrice>{returnedUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
-                      </SummaryItem>
-                      {/* <Button>MƯỢN SÁCH</Button> */}
-                    </Summary>
-                  </>
-                  :
-                  <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                    <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa trả quyển sách nào</div>
-                  </div>
-                :
-                <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-                  <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa trả quyển sách nào</div>
-                </div>
-              :
-              <></>
-          }
-        </Bottom>
-      </Wrapper>
-      <Notification
-        notify={notify}
-        setNotify={setNotify}
-      />
-      <Footer />
-    </Container>
+                            <SummaryItem>
+                              <SummaryItemText>Số đầu sách đã chọn</SummaryItemText>
+                              <SummaryItemPrice>{bookSelect?.cartItems?.length != 0 ? bookSelect?.cartItems?.length : 0}</SummaryItemPrice>
+                            </SummaryItem>
+                            <SummaryItem type="total">
+                              <SummaryItemText>Số sách mượn</SummaryItemText>
+                              <SummaryItemPrice>{bookSelect?.cartItems?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
+                            </SummaryItem>
+                            <Button style={{ cursor: "pointer" }} onClick={async () => {
+                              await orderBook(bookSelect, setNotify)
+                              const UserCart = await getUserCart(setNotify)
+                              setUserCart(UserCart?.data?.data?.cartItems)
+                              const waittoconfirmCart = await getWaitotConfirmUser(setNotify)
+                              setWaitotConfirmUser(waittoconfirmCart?.data?.data?.cartItems)
+                              setBookSelect({ cartItems: [] })
+                            }}>MƯỢN SÁCH</Button>
+                          </SummaryBook>
+                        </>
+                        :
+                        <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                          <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có đầu sách nào trong tủ sách</div>
+                        </div>
+                      :
+                      <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                        <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có đầu sách nào trong tủ sách</div>
+                      </div>
+                    :
+                    <></>
+
+                }
+                {
+                  valueTab == 2 ?
+                    waitotConfirmUser ?
+                      waitotConfirmUser?.length != 0 ?
+                        <>
+                          <Info>
+                            {
+                              waitotConfirmUser?.map(item => {
+                                return (
+                                  <>
+                                    <Product>
+                                      <ProductDetail>
+                                        <Image src={item.bookId.image} />
+                                        <Details>
+                                          <ProductName>
+                                            <b>Tên sách:</b> {item.bookId.name}
+                                          </ProductName>
+                                          <ProductId>
+                                            <b>Tác giả:</b> {item.bookId.translator}
+                                          </ProductId>
+                                          <ProductId>
+                                            <b>Số lượng:</b> {item.amount}
+                                          </ProductId>
+                                          <ProductSize>
+                                            <b>Năm xuất bản:</b> {item.bookId.publicationdate}
+                                          </ProductSize>
+                                          {/* <ProductColor color="black" /> */}
+
+                                        </Details>
+                                      </ProductDetail>
+                                      <PriceDetail>
+                                        <ProductAmountContainer>
+                                          <ProductAmountWait>
+                                            <Tooltip title="Hủy phiên mượn này?" arrow={true}>
+                                              {/* <Chip icon={<FaceIcon />} label="CHỜ DUYỆT" variant="outlined" color="secondary" /> */}
+                                              <ButtonCancel onClick={async () => {
+                                                setModalOpen(true)
+                                                // await removeFromCart(item.bookId._id, setNotify)
+                                                // const UserCart = await getUserCart(setNotify)
+                                                // setUserCart(UserCart?.data?.data)
+                                              }} >HỦY ĐẶT</ButtonCancel>
+                                            </Tooltip>
+                                          </ProductAmountWait>
+                                        </ProductAmountContainer>
+                                        {/* <ProductPrice>$ 30</ProductPrice> */}
+                                      </PriceDetail>
+                                    </Product>
+                                    <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
+                                      {modalOpen &&
+                                        <PopupConfirm
+                                          setOpenModal={setModalOpen}
+                                          title="Bạn có muốn hủy phiên mượn này?"
+                                          id={item._id}
+                                          user={user._id}
+                                          data={item.bookId._id}
+                                          amount={item.amount}
+                                          isPopup={2}
+                                          setNoti={setNotify}
+                                          setDataUser={setWaitotConfirmUser}
+                                        />}
+                                    </div>
+                                    <Hr />
+                                  </>
+                                )
+                              })
+                            }
+                          </Info>
+                          <Summary>
+                            <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
+                            <SummaryItem>
+                              <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
+                              <SummaryItemPrice>{waitotConfirmUser?.length != 0 ? waitotConfirmUser.length : 0}</SummaryItemPrice>
+                            </SummaryItem>
+                            <SummaryItem type="total">
+                              <SummaryItemText>Số sách mượn</SummaryItemText>
+                              <SummaryItemPrice>{waitotConfirmUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
+                            </SummaryItem>
+                          </Summary>
+                        </>
+                        :
+                        <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                          <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ duyệt</div>
+                        </div>
+                      :
+                      <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                        <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ duyệt</div>
+                      </div>
+                    :
+                    <></>
+                }
+                {
+                  valueTab == 3 ?
+                    waitotBorrowUser ?
+                      waitotBorrowUser?.length != 0 ?
+                        <>
+                          <Info>
+                            {
+                              waitotBorrowUser.map(item => {
+                                return (
+                                  <>
+                                    <Product>
+                                      <ProductDetail>
+                                        <Image src={item.bookId.image} />
+                                        <Details>
+                                          <ProductName>
+                                            <b>Tên sách:</b> {item.bookId.name}
+                                          </ProductName>
+                                          <ProductId>
+                                            <b>Tác giả:</b> {item.bookId.translator}
+                                          </ProductId>
+                                          <ProductId>
+                                            <b>Số lượng:</b> {item.amount}
+                                          </ProductId>
+                                          {/* <ProductColor color="black" /> */}
+                                          <ProductSize>
+                                            <b>Năm xuất bản:</b> {item.bookId.publicationdate}
+                                          </ProductSize>
+                                        </Details>
+                                      </ProductDetail>
+                                      <PriceDetail>
+                                        <ProductAmountContainer>
+                                          <Tooltip title="Sách đã được duyệt! Hãy đến thư viện để lấy sách!" arrow={true}>
+                                            <Chip icon={<BookmarkAddedIcon />} label="ĐÃ DUYỆT" variant="outlined" color="secondary" />
+                                          </Tooltip>
+                                        </ProductAmountContainer>
+                                      </PriceDetail>
+                                    </Product>
+                                    <Hr />
+                                  </>
+                                )
+                              })
+                            }
+                          </Info>
+                          <Summary>
+                            <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
+                            <SummaryItem>
+                              <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
+                              <SummaryItemPrice>{waitotBorrowUser?.length != 0 ? waitotBorrowUser.length : 0}</SummaryItemPrice>
+                            </SummaryItem>
+                            <SummaryItem type="total">
+                              <SummaryItemText>Số sách mượn</SummaryItemText>
+                              <SummaryItemPrice>{waitotBorrowUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
+                            </SummaryItem>
+                          </Summary>
+                        </>
+                        :
+                        <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                          <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ lấy</div>
+                        </div>
+                      :
+                      <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                        <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa có phiên nào chờ lấy</div>
+                      </div>
+                    :
+                    <></>
+                }
+                {
+                  valueTab == 4 ?
+                    borrowingUser ?
+                      borrowingUser.length != 0 ?
+                        <>
+                          <Info>
+                            {
+                              borrowingUser.map(item => {
+                                return (
+                                  <>
+                                    <Product>
+                                      <ProductDetail>
+                                        <Image src={item.bookId.image} />
+                                        <Details>
+                                          <ProductName>
+                                            <b>Tên sách:</b> {item.bookId.name}
+                                          </ProductName>
+                                          <ProductId>
+                                            <b>Tác giả:</b> {item.bookId.translator}
+                                          </ProductId>
+                                          <ProductId>
+                                            <b>Số lượng:</b> {item.amount}
+                                          </ProductId>
+                                          {/* <ProductColor color="black" /> */}
+                                          <ProductSize>
+                                            <b>Thời gian phải trả sách:</b> {Moment(item.exp).format('HH:mm:ss, DD/MM/YYYY')}
+                                          </ProductSize>
+                                        </Details>
+                                      </ProductDetail>
+                                      <PriceDetail>
+                                        <ProductAmountContainer>
+                                          {func(item)}
+                                        </ProductAmountContainer>
+                                      </PriceDetail>
+                                    </Product>
+                                    <Hr />
+                                  </>
+                                )
+                              })
+                            }
+                          </Info>
+                          <Summary>
+                            <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
+                            <SummaryItem>
+                              <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
+                              <SummaryItemPrice>{borrowingUser?.length != 0 ? borrowingUser.length : 0}</SummaryItemPrice>
+                            </SummaryItem>
+                            <SummaryItem type="total">
+                              <SummaryItemText>Số sách mượn</SummaryItemText>
+                              <SummaryItemPrice>{borrowingUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
+                            </SummaryItem>
+                          </Summary>
+                        </>
+                        :
+                        <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                          <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa mượn quyển sách nào</div>
+                        </div>
+                      :
+                      <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                        <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa mượn quyển sách nào</div>
+                      </div>
+                    :
+                    <></>
+                }
+                {
+                  valueTab == 5 ?
+                    returnedUser ?
+                      returnedUser.length != 0 ?
+                        <>
+                          <Info>
+                            {
+                              returnedUser.map(item => {
+                                return (
+                                  <>
+                                    <Product>
+                                      <ProductDetail>
+                                        <Image src={item.bookId.image} />
+                                        <Details>
+                                          <ProductName>
+                                            <b>Tên sách:</b> {item.bookId.name}
+                                          </ProductName>
+                                          <ProductId>
+                                            <b>Tác giả:</b> {item.bookId.translator}
+                                          </ProductId>
+                                          <ProductId>
+                                            <b>Số lượng:</b> {item.amount}
+                                          </ProductId>
+                                          {/* <ProductColor color="black" /> */}
+                                          <ProductSize>
+                                            <b>Ngày bạn trả sách</b> {item.timeReturn}
+                                          </ProductSize>
+                                        </Details>
+                                      </ProductDetail>
+                                      <PriceDetail>
+                                        <ProductAmountContainer>
+                                          <Tooltip title="Bạn đã trả sách thành công!" arrow={true}>
+                                            <Chip icon={<BookmarkAddedIcon />} label="ĐÃ TRẢ" variant="outlined" color="success" />
+                                          </Tooltip>
+                                        </ProductAmountContainer>
+                                      </PriceDetail>
+                                    </Product>
+                                    <Hr />
+                                  </>
+                                )
+                              })
+                            }
+                          </Info>
+                          <Summary>
+                            <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
+                            {/* <SummaryItem>
+                      <SummaryItemText>Subtotal</SummaryItemText>
+                      <SummaryItemPrice>$ 80</SummaryItemPrice>
+                    </SummaryItem>
+                    <SummaryItem>
+                      <SummaryItemText>Estimated Shipping</SummaryItemText>
+                      <SummaryItemPrice>$ 5.90</SummaryItemPrice>
+                    </SummaryItem> */}
+                            <SummaryItem>
+                              <SummaryItemText>Số đầu sách chờ duyệt</SummaryItemText>
+                              <SummaryItemPrice>{returnedUser?.length != 0 ? returnedUser.length : 0}</SummaryItemPrice>
+                            </SummaryItem>
+                            <SummaryItem type="total">
+                              <SummaryItemText>Số sách mượn</SummaryItemText>
+                              <SummaryItemPrice>{returnedUser?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
+                            </SummaryItem>
+                            {/* <Button>MƯỢN SÁCH</Button> */}
+                          </Summary>
+                        </>
+                        :
+                        <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                          <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa trả quyển sách nào</div>
+                        </div>
+                      :
+                      <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+                        <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Hiện tại chưa trả quyển sách nào</div>
+                      </div>
+                    :
+                    <></>
+                }
+              </Bottom>
+            </Wrapper>
+            <Notification
+              notify={notify}
+              setNotify={setNotify}
+            />
+            <Footer />
+          </Container>
+          :
+          <LoadingPage />
+      }
+    </div>
   );
 };
 

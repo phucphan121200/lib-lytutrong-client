@@ -9,6 +9,7 @@ import { getListBanner } from "../context/bannerAPI/apiCalls";
 const Container = styled.div`
   width: 100%;
   height: 100vh;
+  margin-top: 30px;
   display: flex;
   position: relative;
   overflow: hidden;
@@ -83,7 +84,7 @@ const Button = styled.a`
   font-size: 20px;
   transition: color 0.4s linear;
   position: relative;
-
+  border-radius: 2px;
   &:hover {
     color: white;
   }

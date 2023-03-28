@@ -12,6 +12,15 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { logout } from "../context/authAPI/AuthAction";
 import Notification from "./Notification"
 import PopupUserInfo from "./popup/PopupUserInfo";
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
 
 const ContainerAnounce = styled.div`
   width: 100%;
@@ -35,13 +44,13 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  padding: 12px 0px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   ${mobile({ padding: "10px 0px" })};
   position: fixed;
   width: 100%;
+  height: 60px;
   z-index: 1000;
   background-color: white;
 `;
@@ -78,7 +87,8 @@ const Center = styled.div`
 
 const Logo = styled.h1`
   font-weight: bold;
-  ${mobile({ fontSize: "24px" })}
+  font-size: 12px;
+  ${mobile({ display: "none" })}
 `;
 const Right = styled.div`
   flex: 1;
@@ -108,14 +118,40 @@ const Item = styled.div`
   }
 `;
 
-const MenuItem = styled.div`
+const MenuItemNav = styled.div`
   font-size: 14px;
-  // cursor: pointer;
   margin-left: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
   ${mobile({ fontSize: "12px", marginLeft: "10px" })}
+`;
+
+const Cart = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #F7F7F7;
+  
+`;
+const Hover = styled.div`
+  display: flex;
+  margin-right: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #fff;
+  &:hover {
+    background-color: #F7F7F7;
+  }
+  &:hover ${Cart} {
+    background-color: #DEDEDE;
+  }
 `;
 
 const Navbar = ({ cart, user }) => {
@@ -126,75 +162,133 @@ const Navbar = ({ cart, user }) => {
     type: "",
   });
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalLogin, setModalLogin] = useState(false);
   const handleLogout = (e) => {
     dispatch(logout())
     logoutAdmin(dispatch, setNotify);
   };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       <Container>
         <Wrapper>
           <Left>
-            {/* <Language>EN</Language> */}
-            {/* <SearchContainer>
-              <Input placeholder="Tìm kiếm" />
-              <Search style={{ color: "gray", fontSize: 16 }} />
-            </SearchContainer> */}
           </Left>
           <Center>
-            {/* <img 
-            src="https://firebasestorage.googleapis.com/v0/b/lib-lututrong.appspot.com/o/Lovepik_com-401498089-book-book-icon-free-vector-illustration-material.png?alt=media&token=2d125193-5c1d-4c07-a901-88da712361f9"
-            alt=""
-            style={{width: "40px", height: "40px"}}/> */}
-            <Link to="/" style={{ textDecoration: "none", color: "black" }}>
-              <Logo>THƯ VIỆN</Logo>
-            </Link>
+            <Tooltip title="Trang chủ thư viện" placement="right" >
+              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/lib-lututrong.appspot.com/o/favicon_w_trans.png?alt=media&token=de204428-9b31-446e-8623-c2467a173b28"
+                  alt=""
+                  style={{ width: "80px", height: "55px" }} />
+                {/* <Logo>LÝ TỰ TRỌNG</Logo> */}
+              </Link>
+            </Tooltip>
           </Center>
           <Right>
             {
               user ?
-                <MenuItem>
-                  <Link to="/cart" style={{ textDecoration: "none", color: "black" }}>
-                    <Badge badgeContent={cart ? cart?.reduce((pre, cur) => { return pre + cur.amount }, 0): 0} color="info" style={{ marginRight: "20px" }} max={99}>
-                      <ShoppingCartOutlined />
-                    </Badge>
-                  </Link>
-                  <Item>
-                    <img
-                      src={user.user.image}
-                      alt=""
-                      className="avatar"
-                      style={{ width: "30px", height: "30px", borderRadius: 50, marginRight: "20px", objectFit: "cover" }}
-                    />
-                    <Options>
-                      <span style={{
-                        display: "flex",
-                        padding: "5px",
-                        cursor: "pointer",
-                        alignItems: "center"
-                      }}
-                        onClick={async () => {
-                          setModalOpen(true)
-                        }}><SettingsIcon style={{ fontSize: "20px", marginRight: "2px" }} /> Cài đặt</span>
-                      <span style={{
-                        display: "flex",
-                        padding: "5px",
-                        cursor: "pointer",
-                        alignItems: "center"
-                      }}
-                        onClick={handleLogout}><LogoutIcon style={{ fontSize: "20px", marginRight: "2px" }} /> Đăng xuất</span>
-                    </Options>
-
-                  </Item>
-                </MenuItem>
+                <>
+                  <MenuItemNav>
+                    <Link to="/cart" style={{ textDecoration: "none", color: "black" }}>
+                      <Tooltip title="Tủ sách" >
+                        <Hover>
+                          <Cart>
+                            <Badge badgeContent={cart ? cart?.reduce((pre, cur) => { return pre + cur.amount }, 0) : 0} color="info" max={99}>
+                              <ShoppingCartOutlined />
+                            </Badge>
+                          </Cart>
+                        </Hover>
+                      </Tooltip>
+                    </Link>
+                  </MenuItemNav>
+                  <Tooltip title="Tài khoản">
+                    <IconButton
+                      onClick={handleClick}
+                      size="small"
+                      sx={{ mr: "20px" }}
+                      aria-controls={open ? 'account-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? 'true' : undefined}
+                    >
+                      <Avatar sx={{ width: 35, height: 35 }} src={user.image}></Avatar>
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    anchorEl={anchorEl}
+                    id="account-menu"
+                    open={open}
+                    disableScrollLock={true}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    PaperProps={{
+                      elevation: 0,
+                      sx: {
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        mt: 1.5,
+                        '& .MuiAvatar-root': {
+                          width: 32,
+                          height: 32,
+                          ml: -0.5,
+                          mr: 1,
+                        },
+                        '&:before': {
+                          content: '""',
+                          display: 'block',
+                          position: 'absolute',
+                          top: 0,
+                          right: 14,
+                          width: 10,
+                          height: 10,
+                          bgcolor: 'background.paper',
+                          transform: 'translateY(-50%) rotate(45deg)',
+                          zIndex: 0,
+                        },
+                      },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  >
+                    <MenuItem onClick={async () => {
+                      setModalOpen(true)
+                      handleClose();
+                    }}>
+                      <Avatar src={user.image} /> {user.name}
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={async () => {
+                      setModalOpen(true)
+                      handleClose();
+                    }}>
+                      <ListItemIcon>
+                        <Settings fontSize="small" />
+                      </ListItemIcon>
+                      Cài đặt bảo mật
+                    </MenuItem>
+                    <MenuItem onClick={() => { handleClose(); handleLogout(); }}>
+                      <ListItemIcon>
+                        <Logout fontSize="small" />
+                      </ListItemIcon>
+                      Đăng xuất
+                    </MenuItem>
+                  </Menu>
+                </>
                 :
                 <Link to="/login" style={{ textDecoration: "none" }}>
-                  <MenuItem style={{ marginRight: "35px", fontWeight: "bold", color: "black" }}
+                  <MenuItemNav style={{ marginRight: "35px", fontWeight: "bold", color: "black" }}
                   // onClick={async () => {
                   //   setModalLogin(true)
                   // }}
-                  >Đăng nhập</MenuItem>
+                  >Đăng nhập</MenuItemNav>
                 </Link>
             }
           </Right>
@@ -217,7 +311,7 @@ const Navbar = ({ cart, user }) => {
         />
       </Container>
       <ContainerAnounce>
-        <h4>Một cuốn sách là một ước mơ</h4>
+        <h3>Mỗi cuốn sách là một ước mơ</h3>
       </ContainerAnounce>
     </>
   );

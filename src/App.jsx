@@ -17,14 +17,14 @@ const App = () => {
       <ScrollToTop />
       <Routes>
         {/* <Route exact path='/' element={user ? <Home /> : <Login />} /> */}
-        <Route exact path='/' element={<Home user={user}/>} />
-        <Route path='/login' element={user ? <Home user={user}/> : <Login />} />
-        <Route path='/cart' element={user ? <Cart user={user}/> : <Login />} />
+        <Route exact path='/' element={<Home />} />
+        <Route path='/login' element={user ? <Home /> : <Login />} />
+        <Route path='/cart' element={user ? <Cart /> : <Login />} />
         <Route path="books">
-          <Route index element={<ProductList user={user}/>} />
-          <Route path=":bookId" element={<Product user={user}/>} />
+          <Route index element={<ProductList />} />
+          <Route path=":bookId" element={<Product />} />
         </Route>
-        <Route path='*' element={<NotFound user={user}/>} />
+        <Route path='*' element={<NotFound />} />
         {/* <Route path='/booklist' element={<ProductList />} /> */}
       </Routes>
     </BrowserRouter>
