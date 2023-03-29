@@ -462,9 +462,6 @@ const Cart = () => {
                                           <ProductId>
                                             <b>Tác giả:</b> {item?.bookId?.translator}
                                           </ProductId>
-                                          <ProductId>
-                                            <b>Nhà xuất bản:</b> {item?.bookId?.issuingcompany}
-                                          </ProductId>
                                           {/* <ProductColor color="black" /> */}
                                           <ProductSize>
                                             <b>Năm xuất bản:</b> {item?.bookId?.publicationdate}

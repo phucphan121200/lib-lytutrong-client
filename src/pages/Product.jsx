@@ -222,12 +222,6 @@ const Product = () => {
                       <b>Năm xuất bản:</b> {book.publicationdate}
                     </Desc>
                     <Desc>
-                      <b>Nhà xuất bản:</b> {book.issuingcompany}
-                    </Desc>
-                    <Desc>
-                      <b>Số trang:</b> {book.numberofpages}
-                    </Desc>
-                    <Desc>
                       <b>Thể loại:</b>
                       {
                         book?.categoryItems?.map(item => {
