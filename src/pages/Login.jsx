@@ -146,7 +146,7 @@ const Loader = styled.div`
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState("");
+  const [idcard, setIdcard] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { isFetching, dispatch } = useContext(AuthContext);
@@ -155,11 +155,6 @@ const Login = () => {
     message: "",
     type: "",
   });
-
-  // const handleLogin = (e) => {
-  //   e.preventDefault();
-  //   login({ phone, password }, dispatch, setNotify);
-  // };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -170,7 +165,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await login({ phone, password }, dispatch, setNotify);
+    await login({ idcard, password }, dispatch, setNotify);
     setLoading(false);
   };
 
@@ -186,11 +181,11 @@ const Login = () => {
             name='issuingcompany'
             id="outlined-required"
             // placeholder="Điền số điện thoại của bạn"
-            label="Số điện thoại"
+            label="CCCD/ Mã định danh"
             sx={{
               '& > :not(style)': { marginRight: "30px", marginLeft: "30px" },
             }}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setIdcard(e.target.value)}
           />
           <FormControl sx={{ margin: "30px" }}
             variant="outlined"

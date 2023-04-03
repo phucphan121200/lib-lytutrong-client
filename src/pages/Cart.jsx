@@ -4,7 +4,7 @@ import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { mobile } from "../responsive";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { getUser } from "../context/userAPI/apiCalls"
@@ -20,6 +20,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import ReportIcon from '@mui/icons-material/Report';
 import LoadingPage from "../components/loadingPage/LoadingPage"
+import { AuthContext } from "../context/authAPI/AuthContext";
 
 const Container = styled.div``;
 
@@ -215,7 +216,7 @@ const ButtonCancel = styled.button`
   }
 `;
 
-const Cart = () => {
+const Cart = ({ userRedux }) => {
   const [valueTab, setValueTab] = useState("1")
   const handleChangeTab = async (event, newValue) => {
     setValueTab(newValue);
@@ -225,7 +226,11 @@ const Cart = () => {
     message: "",
     type: "",
   });
+  const { dispatch } = useContext(AuthContext)
   const [user, setUser] = useState("")
+  const [bookId, setBookId] = useState("")
+  const [sessionId, setSessionId] = useState("")
+  const [amount, setAmount] = useState("")
   const [userCart, setUserCart] = useState("")
   const [waitotConfirmUser, setWaitotConfirmUser] = useState("")
   const [waitotBorrowUser, setWaitoBorrowUser] = useState("")
@@ -356,7 +361,7 @@ const Cart = () => {
       setBorrowingUser(borrowCart?.data?.data?.cartItems?.reverse())
       const returnedCart = await getReturnedUser(setNotify)
       setReturnedUser(returnedCart?.data?.data?.cartItems?.reverse())
-      const UserInfo = await getUser(setNotify)
+      const UserInfo = await getUser(dispatch, setNotify)
       setUser(UserInfo?.data?.data)
     })()
     return;
@@ -391,7 +396,7 @@ const Cart = () => {
       {
         user ?
           <Container>
-            <Navbar cart={userCart} user={user} />
+            <Navbar cart={userCart} user={user} userRedux={userRedux} />
             <Announcement />
             <Wrapper>
               <Title>TỦ SÁCH CỦA BẠN</Title>
@@ -438,6 +443,7 @@ const Cart = () => {
                           <Info>
                             {
                               userCart?.map(item => {
+                                console.log(item)
                                 return (
                                   <>
                                     <Product>
@@ -478,27 +484,29 @@ const Cart = () => {
                                       <CancelOutlined style={{ color: "firebrick", marginTop: "5px", marginRight: "5px", fontSize: "30px", cursor: "pointer" }}
                                         onClick={async () => {
                                           setModalOpen(true)
+                                          setBookId(item.bookId._id)
                                           // await removeFromCart(item.bookId._id, setNotify)
                                           // const UserCart = await getUserCart(setNotify)
                                           // setUserCart(UserCart?.data?.data)
                                         }} />
                                     </Product>
-                                    <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
-                                      {modalOpen &&
-                                        <PopupConfirm
-                                          setOpenModal={setModalOpen}
-                                          title="Bạn có muốn xóa đầu sách này?"
-                                          data={item.bookId._id}
-                                          isPopup={1}
-                                          setNoti={setNotify}
-                                          setDataUser={setUserCart}
-                                        />}
-                                    </div>
+
                                     <Hr />
                                   </>
                                 )
                               })
                             }
+                            <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
+                              {modalOpen &&
+                                <PopupConfirm
+                                  setOpenModal={setModalOpen}
+                                  title="Bạn có muốn xóa đầu sách này?"
+                                  data={bookId}
+                                  isPopup={1}
+                                  setNoti={setNotify}
+                                  setDataUser={setUserCart}
+                                />}
+                            </div>
                           </Info>
                           <SummaryBook>
                             <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
@@ -579,6 +587,9 @@ const Cart = () => {
                                               {/* <Chip icon={<FaceIcon />} label="CHỜ DUYỆT" variant="outlined" color="secondary" /> */}
                                               <ButtonCancel onClick={async () => {
                                                 setModalOpen(true)
+                                                setBookId(item.bookId._id)
+                                                setSessionId(item._id)
+                                                setAmount(item.amount)
                                                 // await removeFromCart(item.bookId._id, setNotify)
                                                 // const UserCart = await getUserCart(setNotify)
                                                 // setUserCart(UserCart?.data?.data)
@@ -589,25 +600,26 @@ const Cart = () => {
                                         {/* <ProductPrice>$ 30</ProductPrice> */}
                                       </PriceDetail>
                                     </Product>
-                                    <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
-                                      {modalOpen &&
-                                        <PopupConfirm
-                                          setOpenModal={setModalOpen}
-                                          title="Bạn có muốn hủy phiên mượn này?"
-                                          id={item._id}
-                                          user={user._id}
-                                          data={item.bookId._id}
-                                          amount={item.amount}
-                                          isPopup={2}
-                                          setNoti={setNotify}
-                                          setDataUser={setWaitotConfirmUser}
-                                        />}
-                                    </div>
+
                                     <Hr />
                                   </>
                                 )
                               })
                             }
+                            <div className="modal" style={{ display: "flex", justifyContent: "center" }}>
+                              {modalOpen &&
+                                <PopupConfirm
+                                  setOpenModal={setModalOpen}
+                                  title="Bạn có muốn hủy phiên mượn này?"
+                                  id={sessionId}
+                                  user={user._id}
+                                  data={bookId}
+                                  amount={amount}
+                                  isPopup={2}
+                                  setNoti={setNotify}
+                                  setDataUser={setWaitotConfirmUser}
+                                />}
+                            </div>
                           </Info>
                           <Summary>
                             <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>

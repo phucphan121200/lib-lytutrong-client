@@ -5,6 +5,7 @@ import { getUserCart, removeFromCart, CancelOrder, getWaitotConfirmUser } from "
 
 
 const PopupConfirm = ({ setOpenModal, title, id, user, data, amount, isPopup, setNoti, setDataUser }) => {
+    console.log(data)
     return (
         <div className="modalBackgroundConfirmPopup">
             <div className="modalContainerr">

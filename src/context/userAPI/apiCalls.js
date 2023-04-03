@@ -1,5 +1,5 @@
 import axios from "axios";
-import { updateUserSuccess, loginSuccess } from "../authAPI/AuthAction"
+import { logout } from "../authAPI/AuthAction"
 const BACK_END_URL = process.env.REACT_APP_BACKEND_URL
 export const handleUpdate = async (id, data, setNotify, setOpenModal) => {
     try {
@@ -64,19 +64,18 @@ export const handleUpdatePassword = async (data, setNotify, setOpenModal) => {
     }
 };
 
-export const getUser = async (setNotify) => {
+export const getUser = async (dispatch, setNotify) => {
     try {
-        const res = await axios.get(BACK_END_URL +"/users/getuser", {
+        const res = await axios.get(BACK_END_URL + "/users/getuser", {
             headers: {
-                token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+                token: "Bearer " + JSON.parse(localStorage.getItem("user"))?.accessToken,
             },
         });
         return res
     } catch (err) {
-        setNotify({
-            isOpen: true,
-            message: "Lỗi hệ thống: " + err,
-            type: "error",
-        });
+        if (err?.response?.status === 401) {
+            localStorage.removeItem("user");
+            dispatch(logout());
+        }
     }
 };

@@ -57,7 +57,7 @@ const ImgContainer = styled.div`
 
 const Image = styled.img`
   margin-top: 30px;
-  height: 80%;
+  height: 85%;
 `;
 
 const InfoContainer = styled.div`

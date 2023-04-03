@@ -8,18 +8,19 @@ import Slider from "../components/Slider";
 import { getUserCart } from "../context/cartAPI/apiCalls"
 import { getUser } from "../context/userAPI/apiCalls"
 import React, { useEffect, useState, useContext } from "react";
-import { getListBook } from "../context/bookAPI/apiCalls";
+import { getallBookClient } from "../context/bookAPI/apiCalls";
 import { AuthContext } from "../context/authAPI/AuthContext";
 import { getListBanner } from "../context/bannerAPI/apiCalls";
 import LoadingCircle from "../components/loadingCircle/LoadingCircle";
 import { getListCategory } from "../context/categoryAPI/apiCalls";
 import LoadingPage from "../components/loadingPage/LoadingPage"
 
-const Home = () => {
+const Home = ({ userRedux }) => {
   const [cart, setCart] = useState("")
   const [user, setUser] = useState("")
   const [book, setBook] = useState("")
-  // const { user } = useContext(AuthContext)
+  const [searchBook, setSearchBook] = useState("")
+  const { dispatch } = useContext(AuthContext)
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -30,14 +31,30 @@ const Home = () => {
 
   useEffect(() => {
     (async () => {
-      const UserCart = await getUserCart(setNotify)
+      const UserCart = await getUserCart(dispatch, setNotify)
       setCart(UserCart?.data?.data?.cartItems)
-      const UserInfo = await getUser(setNotify)
+
+      const UserInfo = await getUser(dispatch, setNotify)
       setUser(UserInfo?.data?.data)
-      const book = await getListBook(setNotify)
-      setBook(book?.data?.data)
+
+      const book = await getallBookClient(setNotify)
+      setSearchBook(book?.data?.data)
+      const arrayBook = [...book?.data?.data]
+      for (let i = arrayBook?.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arrayBook[i], arrayBook[j]] = [arrayBook[j], arrayBook[i]];
+      }
+      if (arrayBook?.length >= 8) {
+        let array8length = []
+        for (let i = 0; i < 8; i++) {
+          array8length.push(arrayBook[i])
+        }
+        setBook(array8length);
+      }
+
       const bannerList = await getListBanner(setNotify)
       setSlideItems(bannerList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
+
       const cateList = await getListCategory(setNotify)
       getCategories(cateList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
     })()
@@ -48,7 +65,7 @@ const Home = () => {
       {
         sliderItems && categories && book ?
           <>
-            < Navbar cart={cart} user={user} />
+            < Navbar cart={cart} user={user} userRedux={userRedux} book={searchBook}/>
             {/* <Announcement /> */}
             {
               sliderItems.length != 0 ?
@@ -57,7 +74,7 @@ const Home = () => {
                 <LoadingCircle />
             }
             <Categories categories={categories} />
-            <Products setCart={setCart} books={book} query="" user={user} />
+            <Products setCart={setCart} books={book} query="" user={user} userRedux={userRedux} />
             {/* <Newsletter /> */}
             <Footer />
           </>

@@ -12,8 +12,7 @@ const Container = styled.div`
 `;
 
 
-const Products = ({ setCart, books, query, user }) => {
-  // const [books, setBooks] = useState("")
+const Products = ({ setCart, books, query, user, userRedux }) => {
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -28,7 +27,7 @@ const Products = ({ setCart, books, query, user }) => {
             books.filter((book) =>
               book.name.toLowerCase().includes(query)
             ).map((item) => (
-              <Product item={item} key={item.name} setCart={setCart} user={user}/>
+              <Product item={item} key={item._id} setCart={setCart} user={user} userRedux={userRedux}/>
             ))
             :
             <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
@@ -36,7 +35,16 @@ const Products = ({ setCart, books, query, user }) => {
               <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Không có sách nào được tìm thấy</div>
             </div>
           :
-          <LoadingCircle />
+          <>
+            <Product item={""} key={1} setCart={setCart} user={user} />
+            <Product item={""} key={2} setCart={setCart} user={user} />
+            <Product item={""} key={3} setCart={setCart} user={user} />
+            <Product item={""} key={4} setCart={setCart} user={user} />
+            <Product item={""} key={5} setCart={setCart} user={user} />
+            <Product item={""} key={6} setCart={setCart} user={user} />
+            <Product item={""} key={7} setCart={setCart} user={user} />
+            <Product item={""} key={8} setCart={setCart} user={user} />
+          </>
       }
     </Container>
   );

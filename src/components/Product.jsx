@@ -57,7 +57,7 @@ const Container = styled.div`
     height: 85%;
     width: 65%;
   }
-  ${scence_1({width: "307px" })}
+  ${scence_1({ width: "307px" })}
 `;
 
 const Circle = styled.div`
@@ -102,7 +102,32 @@ const Login = styled.div`
   }
 `;
 
-const Product = ({ item, key, setCart, user }) => {
+const Loader = styled.div`
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &::after {
+    content: "";
+    width: 40px;
+    height: 40px;
+    border: 5px solid #dddddd;
+    border-top-color: #B2B2B2;
+    border-radius: 50%;
+    animation: loading 0.75s ease infinite;
+  }
+  @keyframes loading {
+    from {
+      transform: rotate(0turn)
+    }
+    to {
+      transform: rotate(1turn)
+    }
+  }
+`;
+
+const Product = ({ item, key, setCart, user, userRedux }) => {
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -112,41 +137,44 @@ const Product = ({ item, key, setCart, user }) => {
   return (
     <Container key={item._id}>
       <Circle />
-      <Image src={item.image} />
       {
-        user ?
-          <Info>
-            <Tooltip title="Thêm vào giỏ hàng"
-              onClick={async () => {
-                await addToCart(item._id, 1, setNotify);
-                const UserCart = await getUserCart(setNotify)
-                setCart(UserCart?.data?.data?.cartItems)
-              }}>
-              <Icon>
-                <AddShoppingCart />
-              </Icon>
-            </Tooltip>
-            <Link to={"/books/" + item._id} state={item._id} style={{ textDecoration: "none", color: "black" }}>
-              <Tooltip title="Xem chi tiết">
-                <Icon >
-                  <InfoOutlined />
-                </Icon>
-              </Tooltip>
-            </Link>
-            {/* <Tooltip title="Mượn ngay!">
-              <Icon>
-                <CreditScoreIcon />
-              </Icon>
-            </Tooltip> */}
-          </Info>
+        item ?
+          <>
+            <Image src={item.image} />
+            {
+              userRedux ?
+                <Info>
+                  <Tooltip title="Thêm vào giỏ hàng"
+                    onClick={async () => {
+                      await addToCart(item._id, 1, setNotify);
+                      const UserCart = await getUserCart(setNotify)
+                      setCart(UserCart?.data?.data?.cartItems)
+                    }}>
+                    <Icon>
+                      <AddShoppingCart />
+                    </Icon>
+                  </Tooltip>
+                  <Link to={"/books/" + item._id} state={item._id} style={{ textDecoration: "none", color: "black" }}>
+                    <Tooltip title="Xem chi tiết">
+                      <Icon >
+                        <InfoOutlined />
+                      </Icon>
+                    </Tooltip>
+                  </Link>
+                </Info>
+                :
+                <Info>
+                  <Link to="/login" style={{ textDecoration: "none", color: "black" }}>
+                    <Login>
+                      Đăng nhập
+                    </Login>
+                  </Link>
+                </Info>
+            }
+
+          </>
           :
-          <Info>
-            <Link to="/login" style={{ textDecoration: "none", color: "black" }}>
-              <Login>
-                Đăng nhập
-              </Login>
-            </Link>
-          </Info>
+          <Loader />
       }
       <Notification
         notify={notify}

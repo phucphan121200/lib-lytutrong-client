@@ -23,6 +23,8 @@ import { useLocation } from "react-router-dom";
 import LoadingCircle from "../components/loadingCircle/LoadingCircle";
 import Pagination from '@mui/material/Pagination';
 import { getUser } from "../context/userAPI/apiCalls"
+import { AuthContext } from "../context/authAPI/AuthContext";
+import LoadingPage from "../components/loadingPage/LoadingPage"
 
 const Container = styled.div``;
 
@@ -32,7 +34,8 @@ const Title = styled.h1`
 
 const FilterContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
+  margin-top: 30px;
 `;
 
 const Filter = styled.div`
@@ -54,7 +57,8 @@ const SelectTemp = styled.select`
 `;
 const Option = styled.option``;
 
-const ProductList = () => {
+const ProductList = ({ userRedux }) => {
+  const { dispatch } = useContext(AuthContext)
   const [cate, setCate] = useState("")
   const [book, setBook] = useState("")
   const [query, setQuery] = useState("")
@@ -65,12 +69,15 @@ const ProductList = () => {
   });
   const [user, setUser] = useState("")
   const [currentPage, setcurrentPage] = useState(1)
-  const [postPerPage, setpostPerPage] = useState(12)
+  const [postPerPage, setpostPerPage] = useState(8)
   const location = useLocation()
   const [cart, setCart] = useState("")
   const [age, setAge] = useState(location?.state?.item._id ? location.state.item._id : 1);
+
+
   const handleChange = async (event) => {
     setAge(event.target.value);
+    setBook("")
     const book = await filterBookClient(event.target.value, setNotify)
     setBook(book?.data?.data)
   };
@@ -86,93 +93,74 @@ const ProductList = () => {
 
   useEffect(() => {
     (async () => {
-      const UserInfo = await getUser(setNotify)
+      const UserInfo = await getUser(dispatch, setNotify)
       setUser(UserInfo?.data?.data)
-      const book = await filterBookClient(age, setNotify)
-      setBook(book?.data?.data)
-      const UserCart = await getUserCart(setNotify)
+      const UserCart = await getUserCart(dispatch, setNotify)
       setCart(UserCart?.data?.data?.cartItems)
       const Catetory = await getListCategory(setNotify)
       setCate(Catetory?.data?.data)
+      const book = await filterBookClient(age, setNotify)
+      setBook(book?.data?.data)
     })()
     return;
   }, [])
 
   return (
-    <Container>
-      <Navbar cart={cart} user={user} />
-      <Announcement />
-      <Title>Danh mục các đầu sách</Title>
-      <FilterContainer>
-        <Filter>
-          <FormControl sx={{ width: "250px", marginTop: "10px" }}>
-            <InputLabel id="demo-simple-select-label">Lọc sách theo thể loại</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={age}
-              MenuProps={{ disableScrollLock: true }}
-              label="Lọc sách theo thể loại"
-              onChange={handleChange}
-            >
-              <MenuItem key={123456789} value={1}>Không lọc</MenuItem>
-              {
-                cate ?
-                  cate.map(option => {
-                    return (
-                      <MenuItem key={option._id} value={option._id}>{option.name}</MenuItem>
-                    )
-                  })
-                  :
-                  <LoadingCircle />
-              }
-            </Select>
-          </FormControl>
-
-        </Filter>
-
-        <Filter>
-          <FormControl sx={{ marginTop: "10px", marginBottom: "10px" }}
-            variant="outlined"
-            id="outlined-required"
-            onChange={(e) => setQuery((e.target.value).toLowerCase())}
-          >
-            <InputLabel htmlFor="outlined-adornment-password">Tìm kiếm theo tên sách</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    edge="end"
-                  >
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              }
-              label="Tìm kiếm theo tên sách"
-            />
-          </FormControl>
-        </Filter>
-      </FilterContainer>
-
+    <div>
       {
-        currentPost ?
-          <>
-            <Products setCart={setCart} books={currentPost} query={query} user={user} />
-            <Pagination style={{ display: "flex", justifyContent: "center" }} count={Math.ceil(book.length / postPerPage)} page={currentPage} onChange={setPagination} size="large" />
-          </>
-          :
-          <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-              <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Không có sách nào được tìm thấy</div>
-            </div>
-      }
+        // userRedux ?
+        <Container>
+          <Navbar cart={cart} user={user} userRedux={userRedux} book={book} />
+          {/* <Announcement /> */}
+          {/* <Title>Danh mục các đầu sách</Title> */}
+          <FilterContainer>
+            <Filter>
+              <FormControl sx={{ width: "250px", marginTop: "10px" }}>
+                <InputLabel id="demo-simple-select-label">Lọc sách theo thể loại</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={age}
+                  MenuProps={{ disableScrollLock: true }}
+                  label="Lọc sách theo thể loại"
+                  onChange={handleChange}
+                >
+                  <MenuItem key={123456789} value={1}>Không lọc</MenuItem>
+                  {
+                    cate ?
+                      cate.map(option => {
+                        return (
+                          <MenuItem key={option._id} value={option._id}>{option.name}</MenuItem>
+                        )
+                      })
+                      :
+                      <></>
+                  }
+                </Select>
+              </FormControl>
+            </Filter>
+          </FilterContainer>
+          {
+            // currentPost ?
+            <>
+              <Products setCart={setCart} books={currentPost} query={query} user={user} userRedux={userRedux} />
+              <Pagination style={{ display: "flex", justifyContent: "center" }} count={Math.ceil(book.length / postPerPage)} page={currentPage} onChange={setPagination} size="large" />
+            </>
+            // :
+            // <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+            //   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
+            //   <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Không có sách nào được tìm thấy</div>
+            // </div>
+          }
 
-      {/* <Pagination totalPost={book.length} postPerPage={postPerPage}/> */}
-      {/* <Newsletter /> */}
-      <Footer />
-    </Container>
+          {/* <Pagination totalPost={book.length} postPerPage={postPerPage}/> */}
+          {/* <Newsletter /> */}
+          <Footer />
+        </Container>
+        // :
+        // <LoadingPage />
+      }
+    </div>
   );
 };
 

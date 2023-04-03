@@ -143,7 +143,7 @@ const Button404 = styled.button`
   cursor: pointer;
 `;
 
-const Product = () => {
+const Product = ({ userRedux }) => {
   const location = useLocation();
   const [user, setUser] = useState("")
   const [path, bookId] = location.pathname.split("/books/");
@@ -206,7 +206,7 @@ const Product = () => {
       {
         book ?
           <Container>
-            <Navbar cart={cart} user={user} />
+            <Navbar cart={cart} user={user} userRedux={userRedux} />
             {
               book.length != 0 ?
                 <Wrapper>

@@ -2,6 +2,7 @@ import axios from "axios";
 import { loginFailure, loginStart, loginSuccess, logout } from "./AuthAction";
 
 const BACK_END_URL = process.env.REACT_APP_BACKEND_URL
+
 export const login = async (user, dispatch, setNotify) => {
     dispatch(loginStart());
     try {
@@ -9,7 +10,6 @@ export const login = async (user, dispatch, setNotify) => {
         if (res.data.success == true) {
             localStorage.setItem("user", JSON.stringify(res.data.data))
             setTimeout(() => {
-                dispatch(logout())
                 logoutAdmin(dispatch, setNotify)
             }, res.data.data.expire_in)
             setNotify({
@@ -28,23 +28,27 @@ export const login = async (user, dispatch, setNotify) => {
             dispatch(loginFailure());
         }
     } catch (err) {
-        setNotify({
-            isOpen: true,
-            message: "Lỗi đăng nhập: " + err,
-            type: "error",
-        });
+        console.log(err)
+        if (err.response.status === 400
+            || err.response.status === 400
+            || err.response.status === 500) {
+            setNotify({
+                isOpen: true,
+                message: err.response.data.msg,
+                type: "error",
+            });
+        }
         dispatch(loginFailure());
     }
 };
 
 
 export const logoutAdmin = async (dispatch, setNotify) => {
-    localStorage.removeItem("user")
+    localStorage.removeItem("user");
     setNotify({
         isOpen: true,
-        message: "Đăng xuất",
+        message: "Tài khoản đã được đăng xuất!",
         type: "success",
     });
     dispatch(logout());
-
 };

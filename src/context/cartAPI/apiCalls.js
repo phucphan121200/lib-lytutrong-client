@@ -1,19 +1,19 @@
 import axios from "axios";
+import { logout } from "../authAPI/AuthAction"
 const BACK_END_URL = process.env.REACT_APP_BACKEND_URL
-export const getUserCart = async (setNotify) => {
+export const getUserCart = async (dispatch, setNotify) => {
     try {
         const res = await axios.get(BACK_END_URL + "/carts/getBookInCart", {
             headers: {
-                token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+                token: "Bearer " + JSON.parse(localStorage.getItem("user"))?.accessToken,
             },
         });
         return res;
     } catch (err) {
-        setNotify({
-            isOpen: true,
-            message: "Lỗi hệ thống: " + err,
-            type: "error",
-        });
+        if (err?.response?.status === 401) {
+            localStorage.removeItem("user");
+            dispatch(logout());
+        }
     }
 }
 
