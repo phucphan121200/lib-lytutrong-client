@@ -304,35 +304,37 @@ const length = (book, search) => {
   const listBook = book.filter((books) => books.name.toLowerCase().includes(search.toLowerCase()));
   if (listBook.length > 0) {
     return listBook.slice(0, 5).map((item) => (
-        <MenuItemSearch >
-          <ImageSearch src={item.image} />
-          <MenuItemInfo>
-            <MenuItemName>
+      <MenuItemSearch >
+        <ImageSearch src={item.image} />
+        <MenuItemInfo>
+          <MenuItemName>
+            <Link to={"/books/" + item._id} state={item._id} style={{ textDecoration: "none", color: "black" }}>
               {item.name}
-            </MenuItemName>
-            <MenuItemTranslator>
-              {item.translator}
-            </MenuItemTranslator>
-          </MenuItemInfo>
-        </MenuItemSearch>
-      )
+            </Link>
+          </MenuItemName>
+          <MenuItemTranslator>
+            {item.translator}
+          </MenuItemTranslator>
+        </MenuItemInfo>
+      </MenuItemSearch>
+    )
     );
   } else {
     return (
       <MenuItemSearch >
-      <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "100%"}}>
-      <img src="https://cdn4.iconfinder.com/data/icons/library-4/49/library-09-512.png" 
-        alt="" 
-        style={{width: "70px", height: "70px"}}/>
-        Không tìm thấy bất kì sách nào!
-      </div>
-        
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }}>
+          <img src="https://cdn4.iconfinder.com/data/icons/library-4/49/library-09-512.png"
+            alt=""
+            style={{ width: "70px", height: "70px" }} />
+          Không tìm thấy bất kì sách nào!
+        </div>
+
       </MenuItemSearch>
     )
   }
 }
 
-const Navbar = ({cart, user, userRedux, book}) => {
+const Navbar = ({ cart, user, userRedux, book }) => {
   const { dispatch } = useContext(AuthContext)
   const [notify, setNotify] = useState({
     isOpen: false,
@@ -377,7 +379,6 @@ const Navbar = ({cart, user, userRedux, book}) => {
       <Container>
         <Wrapper>
           <Left>
-
             <Searchbox open={activeSearch} ref={domNode}>
               <div style={{
                 width: "35px",

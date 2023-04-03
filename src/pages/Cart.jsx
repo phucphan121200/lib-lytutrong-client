@@ -21,6 +21,7 @@ import DangerousIcon from '@mui/icons-material/Dangerous';
 import ReportIcon from '@mui/icons-material/Report';
 import LoadingPage from "../components/loadingPage/LoadingPage"
 import { AuthContext } from "../context/authAPI/AuthContext";
+import { getallBookClient } from "../context/bookAPI/apiCalls";
 
 const Container = styled.div``;
 
@@ -239,6 +240,7 @@ const Cart = ({ userRedux }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const [check, setCheck] = useState(false);
   const [bookSelect, setBookSelect] = useState({ cartItems: [] })
+  const [searchBook, setSearchBook] = useState("")
 
   const checkOrderBook = (event, item) => {
     if (event.target.checked == true) {
@@ -342,7 +344,7 @@ const Cart = ({ userRedux }) => {
   }
   useEffect(() => {
     (async () => {
-      const UserCart = await getUserCart(setNotify)
+      const UserCart = await getUserCart(dispatch, setNotify)
       setUserCart(UserCart?.data?.data?.cartItems?.reverse().map((item, checked) => ({ ...item, checked: false })))
       UserCart?.cartItems?.map(item => {
         if (item.amount > item.bookId.authStock) {
@@ -353,6 +355,8 @@ const Cart = ({ userRedux }) => {
           })
         }
       })
+      const book = await getallBookClient(setNotify)
+      setSearchBook(book?.data?.data)
       const waittoconfirmCart = await getWaitotConfirmUser(setNotify)
       setWaitotConfirmUser(waittoconfirmCart?.data?.data?.cartItems?.reverse())
       const waittoborrowCart = await getWaitoBorrowUser(setNotify)
@@ -396,7 +400,7 @@ const Cart = ({ userRedux }) => {
       {
         user ?
           <Container>
-            <Navbar cart={userCart} user={user} userRedux={userRedux} />
+            <Navbar cart={userCart} user={user} userRedux={userRedux} book={searchBook}/>
             <Announcement />
             <Wrapper>
               <Title>TỦ SÁCH CỦA BẠN</Title>

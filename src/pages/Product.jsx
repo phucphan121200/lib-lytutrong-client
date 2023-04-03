@@ -6,8 +6,8 @@ import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import { mobile } from "../responsive";
 import { useLocation } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-import { getBook } from "../context/bookAPI/apiCalls"
+import React, { useEffect, useState, useContext } from "react";
+import { getBook, getallBookClient } from "../context/bookAPI/apiCalls"
 import { addToCart } from "../context/cartAPI/apiCalls"
 import Notification from "../components/Notification";
 import { Chip } from "@mui/material";
@@ -15,6 +15,7 @@ import { getUserCart } from "../context/cartAPI/apiCalls"
 import { getUser } from "../context/userAPI/apiCalls"
 import { Link } from "react-router-dom";
 import LoadingPage from "../components/loadingPage/LoadingPage"
+import { AuthContext } from "../context/authAPI/AuthContext";
 
 const Container = styled.div``;
 
@@ -144,11 +145,13 @@ const Button404 = styled.button`
 `;
 
 const Product = ({ userRedux }) => {
+  const { dispatch } = useContext(AuthContext)
   const location = useLocation();
   const [user, setUser] = useState("")
   const [path, bookId] = location.pathname.split("/books/");
   const [book, setBook] = useState("")
   const [quantity, setQuantity] = useState(1)
+  const [searchBook, setSearchBook] = useState("")
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -158,12 +161,14 @@ const Product = ({ userRedux }) => {
 
   useEffect(() => {
     (async () => {
-      const UserInfo = await getUser(setNotify)
+      const UserInfo = await getUser(dispatch, setNotify)
       setUser(UserInfo?.data?.data)
       const book = await getBook(bookId, setNotify)
       setBook(book?.data?.data)
-      const UserCart = await getUserCart(setNotify)
+      const UserCart = await getUserCart(dispatch, setNotify)
       setCart(UserCart?.data?.data?.cartItems)
+      const bookSearch = await getallBookClient(setNotify)
+      setSearchBook(bookSearch?.data?.data)
     })()
     return;
   }, [])
@@ -200,13 +205,12 @@ const Product = ({ userRedux }) => {
     }
 
   }
-  console.log(book)
   return (
     <div>
       {
         book ?
           <Container>
-            <Navbar cart={cart} user={user} userRedux={userRedux} />
+            <Navbar cart={cart} user={user} userRedux={userRedux} book={searchBook} />
             {
               book.length != 0 ?
                 <Wrapper>
