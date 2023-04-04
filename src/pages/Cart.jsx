@@ -22,6 +22,7 @@ import ReportIcon from '@mui/icons-material/Report';
 import LoadingPage from "../components/loadingPage/LoadingPage"
 import { AuthContext } from "../context/authAPI/AuthContext";
 import { getallBookClient } from "../context/bookAPI/apiCalls";
+import { Link } from "react-router-dom";
 
 const Container = styled.div``;
 
@@ -43,12 +44,15 @@ const Top = styled.div`
 `;
 
 const TopButton = styled.button`
+  width: 180px;
+  height: 35px;
   padding: 10px;
   font-weight: 600;
   cursor: pointer;
+  border-radius: 2px;
   border: ${(props) => props.type === "filled" && "none"};
   background-color: ${(props) =>
-    props.type === "filled" ? "black" : "transparent"};
+    props.type === "filled" ? "#2E8B57" : "transparent"};
   color: ${(props) => props.type === "filled" && "white"};
 `;
 
@@ -196,11 +200,16 @@ const SummaryItemPrice = styled.span``;
 
 const Button = styled.button`
   width: 100%;
-  padding: 10px;
-  background-color: black;
+  height: 40px;
+  background-color: #2E8B57;
   color: white;
+  border: none;
+  border-radius: 2px;
   font-weight: 600;
   margin-top: 30px;
+  &:hover {
+    background-color: #349b61;
+  }
 `;
 
 const ButtonCancel = styled.button`
@@ -214,6 +223,31 @@ const ButtonCancel = styled.button`
   cursor: pointer;
   :&hover{
     background-color: #E96479;
+  }
+`;
+
+const Loader = styled.div`
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border: 5px solid #fff;
+    border-top-color: #B2B2B2;
+    border-radius: 50%;
+    animation: loading 0.75s ease infinite;
+  }
+  @keyframes loading {
+    from {
+      transform: rotate(0turn)
+    }
+    to {
+      transform: rotate(1turn)
+    }
   }
 `;
 
@@ -241,6 +275,7 @@ const Cart = ({ userRedux }) => {
   const [check, setCheck] = useState(false);
   const [bookSelect, setBookSelect] = useState({ cartItems: [] })
   const [searchBook, setSearchBook] = useState("")
+  const [loading, setLoading] = useState(false);
 
   const checkOrderBook = (event, item) => {
     if (event.target.checked == true) {
@@ -393,14 +428,12 @@ const Cart = ({ userRedux }) => {
       }
     }
   };
-
-  console.log(bookSelect)
   return (
     <div>
       {
         user ?
           <Container>
-            <Navbar cart={userCart} user={user} userRedux={userRedux} book={searchBook}/>
+            <Navbar cart={userCart} user={user} userRedux={userRedux} book={searchBook} />
             <Announcement />
             <Wrapper>
               <Title>TỦ SÁCH CỦA BẠN</Title>
@@ -436,7 +469,11 @@ const Cart = ({ userRedux }) => {
                       </TabContext>
                   }
                 </TopTexts>
-                <TopButton>TIẾP TỤC MƯỢN SÁCH</TopButton>
+                <TopButton>
+                  <Link to="/books" style={{ textDecoration: "none", color: "black" }}>
+                    TIẾP TỤC MƯỢN SÁCH
+                  </Link>
+                </TopButton>
               </Top>
               <Bottom>
                 {
@@ -447,7 +484,6 @@ const Cart = ({ userRedux }) => {
                           <Info>
                             {
                               userCart?.map(item => {
-                                console.log(item)
                                 return (
                                   <>
                                     <Product>
@@ -489,9 +525,6 @@ const Cart = ({ userRedux }) => {
                                         onClick={async () => {
                                           setModalOpen(true)
                                           setBookId(item.bookId._id)
-                                          // await removeFromCart(item.bookId._id, setNotify)
-                                          // const UserCart = await getUserCart(setNotify)
-                                          // setUserCart(UserCart?.data?.data)
                                         }} />
                                     </Product>
 
@@ -514,14 +547,6 @@ const Cart = ({ userRedux }) => {
                           </Info>
                           <SummaryBook>
                             <SummaryTitle>TỔNG SỐ SÁCH</SummaryTitle>
-                            {/* <SummaryItem>
-                      <SummaryItemText>Subtotal</SummaryItemText>
-                      <SummaryItemPrice>$ 80</SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem>
-                      <SummaryItemText>Estimated Shipping</SummaryItemText>
-                      <SummaryItemPrice>$ 5.90</SummaryItemPrice>
-                    </SummaryItem> */}
                             <SummaryItem>
                               <SummaryItemText>Số đầu sách đã chọn</SummaryItemText>
                               <SummaryItemPrice>{bookSelect?.cartItems?.length != 0 ? bookSelect?.cartItems?.length : 0}</SummaryItemPrice>
@@ -531,13 +556,24 @@ const Cart = ({ userRedux }) => {
                               <SummaryItemPrice>{bookSelect?.cartItems?.reduce((pre, cur) => { return pre + cur.amount }, 0)}</SummaryItemPrice>
                             </SummaryItem>
                             <Button style={{ cursor: "pointer" }} onClick={async () => {
+                              setLoading(true)
                               await orderBook(bookSelect, setNotify)
                               const UserCart = await getUserCart(setNotify)
                               setUserCart(UserCart?.data?.data?.cartItems)
                               const waittoconfirmCart = await getWaitotConfirmUser(setNotify)
                               setWaitotConfirmUser(waittoconfirmCart?.data?.data?.cartItems)
                               setBookSelect({ cartItems: [] })
-                            }}>MƯỢN SÁCH</Button>
+                              setLoading(false)
+                              setValueTab(2)
+                            }}>
+                              {
+                                loading ?
+                                  <Loader /> :
+                                  <p style={{ fontSize: "15px" }}>
+                                    MƯỢN SÁCH
+                                  </p>
+                              }
+                            </Button>
                           </SummaryBook>
                         </>
                         :

@@ -24,9 +24,7 @@ import Logout from '@mui/icons-material/Logout';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-import { getUserCart } from "../context/cartAPI/apiCalls";
-import { getUser } from "../context/userAPI/apiCalls";
-import { getallBookClient } from "../context/bookAPI/apiCalls";
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 
 const ContainerAnounce = styled.div`
   width: 100%;
@@ -429,7 +427,6 @@ const Navbar = ({ cart, user, userRedux, book }) => {
                   src="https://firebasestorage.googleapis.com/v0/b/lib-lututrong.appspot.com/o/favicon_w_trans.png?alt=media&token=de204428-9b31-446e-8623-c2467a173b28"
                   alt=""
                   style={{ width: "80px", height: "55px" }} />
-                {/* <Logo>LÝ TỰ TRỌNG</Logo> */}
               </Link>
             </Tooltip>
           </Center>
@@ -443,7 +440,7 @@ const Navbar = ({ cart, user, userRedux, book }) => {
                         <Hover>
                           <Cart>
                             <Badge badgeContent={cart ? cart?.reduce((pre, cur) => { return pre + cur.amount }, 0) : 0} color="info" max={99}>
-                              <LocalLibraryIcon />
+                              <ShoppingBasketIcon />
                             </Badge>
                           </Cart>
                         </Hover>

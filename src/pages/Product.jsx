@@ -1,9 +1,7 @@
 import { Add, Remove } from "@material-ui/icons";
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import Newsletter from "../components/Newsletter";
 import { mobile } from "../responsive";
 import { useLocation } from "react-router-dom";
 import React, { useEffect, useState, useContext } from "react";
@@ -16,6 +14,9 @@ import { getUser } from "../context/userAPI/apiCalls"
 import { Link } from "react-router-dom";
 import LoadingPage from "../components/loadingPage/LoadingPage"
 import { AuthContext } from "../context/authAPI/AuthContext";
+import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
+import BookIcon from '@mui/icons-material/Book';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 
 const Container = styled.div``;
 
@@ -97,10 +98,10 @@ const FilterSize = styled.select`
 const FilterSizeOption = styled.option``;
 
 const AddContainer = styled.div`
-  width: 50%;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: start;
   ${mobile({ width: "100%" })}
 `;
 
@@ -122,26 +123,104 @@ const Amount = styled.span`
 `;
 
 const Button = styled.button`
-  padding: 15px;
-  // border: 2px solid teal;
+  position: relative;
+  margin-left: 30px;
+  padding: 20px;
   border: none;
-  background-color: #0E8388;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2E8B57;
   color: white;
   cursor: pointer;
   font-weight: bold;
   border-radius: 5px;
-
-  &:hover{
-      background-color: #3F979B;
+  overflow: hidden;
+  transition: 0.5s ease;
+  &:active {
+    transform: scale(0.9)
+  }
+  &:hover {
+    background-color: #349b61;
   }
 `;
 
-const Button404 = styled.button`
-  margin-top: 20px;
-  padding: 10px;
-  font-size: 20px;
-  background-color: transparent;
-  cursor: pointer;
+const TextAddtoCart = styled.span`
+  ${props => props.add ?
+    "animation: text1 1.5s ease-in-out forwards;" : ""
+  }
+  @keyframes text1 {
+    0% {
+      opacity: 1;
+    }
+    20%, 100% {
+      opacity: 0;
+    }
+  }
+`;
+const TextAddDone = styled.span`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  ${props => props.add ?
+    "animation: text2 1.5s ease-in-out forwards;" : ""
+  }
+  @keyframes text2 {
+    0%, 80% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+`;
+
+const IconCart = styled.span`
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  ${props => props.add ?
+    "animation: cart 1.5s ease-in-out forwards;" : ""
+  }
+  @keyframes cart {
+    0% {
+      left: -10%;
+    }
+    40%, 60% {
+      left: 50%;
+    }
+    100% {
+      left: 110%;
+    }
+  }
+`;
+
+const IconBook = styled.span`
+  position: absolute;
+  top: -20%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  ${props => props.add ?
+    "animation: book 1.5s ease-in-out forwards;" : ""
+  }
+  @keyframes book {
+    0%, 40% {
+      top: -20%;
+    }
+    60% {
+      top: 55%;
+      left: 50%;
+    }
+    100% {
+      top: 55%;
+      left: 112%;
+    }
+  }
 `;
 
 const Product = ({ userRedux }) => {
@@ -152,6 +231,7 @@ const Product = ({ userRedux }) => {
   const [book, setBook] = useState("")
   const [quantity, setQuantity] = useState(1)
   const [searchBook, setSearchBook] = useState("")
+  const [add, setAdd] = useState(false)
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -242,10 +322,25 @@ const Product = ({ userRedux }) => {
                         <Amount>{quantity}</Amount>
                         <Add style={{ cursor: "pointer" }} onClick={() => handleQuantity("asc")} />
                       </AmountContainer>
-                      <Button onClick={async () => {
-                        await addToCart(book._id, quantity, setNotify); const UserCart = await getUserCart(setNotify)
-                        setCart(UserCart?.data?.data?.cartItems)
-                      }}>THÊM VÀO TỦ SÁCH</Button>
+                      <Button
+                        onClick={async () => {
+                          setAdd(true);
+                          await addToCart(book._id, quantity, setNotify); const UserCart = await getUserCart(setNotify)
+                          setCart(UserCart?.data?.data?.cartItems)
+                          setTimeout(() => {
+                            setAdd(false)
+                          }, 3000)
+                        }}
+                      >
+                        <TextAddtoCart add={add}>THÊM VÀO TỦ SÁCH</TextAddtoCart>
+                        <TextAddDone add={add}>ĐÃ THÊM</TextAddDone>
+                        <IconCart add={add}>
+                          <ShoppingBasketIcon />
+                        </IconCart>
+                        <IconBook add={add}>
+                          <BookIcon style={{ fontSize: "15px" }} />
+                        </IconBook>
+                      </Button>
                     </AddContainer>
                   </InfoContainer>
                 </Wrapper>
