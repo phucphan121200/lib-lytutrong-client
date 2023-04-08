@@ -39,7 +39,7 @@ const FilterContainer = styled.div`
 `;
 
 const Filter = styled.div`
-  margin: 20px;
+  margin: 20px 20px 20px 0px;
   ${mobile({ width: "0px 20px", display: "flex", flexDirection: "column" })}
 `;
 
@@ -72,16 +72,25 @@ const ProductList = ({ userRedux }) => {
   const [postPerPage, setpostPerPage] = useState(8)
   const location = useLocation()
   const [cart, setCart] = useState("")
-  const [age, setAge] = useState(location?.state?.item._id ? location.state.item._id : 1);
+  const [age, setAge] = useState({ grade: 0, cate: location?.state?.item._id ? location.state.item._id : 1 });
+  const [grade, setGrade] = useState(0);
 
 
-  const handleChange = async (event) => {
-    setAge(event.target.value);
+  const handleGradeChange = async (event) => {
+    setcurrentPage(1);
+    setAge({ grade: event.target.value, cate: age.cate });
     setBook("")
-    const book = await filterBookClient(event.target.value, setNotify)
+    const book = await filterBookClient({ grade: event.target.value, cate: age.cate }, setNotify)
     setBook(book?.data?.data)
   };
 
+  const handleChange = async (event) => {
+    setcurrentPage(1);
+    setAge({grade: age.grade, cate: event.target.value });
+    setBook("")
+    const book = await filterBookClient({ grade: age.grade, cate: event.target.value }, setNotify)
+    setBook(book?.data?.data)
+  };
 
   const lastPostIndex = currentPage * postPerPage
   const firstPostIndex = lastPostIndex - postPerPage
@@ -108,19 +117,38 @@ const ProductList = ({ userRedux }) => {
   return (
     <div>
       {
-        // userRedux ?
         <Container>
           <Navbar cart={cart} user={user} userRedux={userRedux} book={book} />
-          {/* <Announcement /> */}
-          {/* <Title>Danh mục các đầu sách</Title> */}
           <FilterContainer>
             <Filter>
-              <FormControl sx={{ width: "250px", marginTop: "10px" }}>
-                <InputLabel id="demo-simple-select-label">Lọc sách theo thể loại</InputLabel>
+              <FormControl sx={{ width: "180px", marginTop: "10px" }}>
+                <InputLabel id="demo-simple-select-label">Lọc sách theo lớp</InputLabel>
                 <Select
+                  name="grade"
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={age}
+                  value={age.grade}
+                  MenuProps={{ disableScrollLock: true }}
+                  label="Lọc sách theo lớp"
+                  onChange={handleGradeChange}
+                >
+                  <MenuItem key={0} value={0}>Không lọc</MenuItem>
+                  <MenuItem key={1} value={1}>Lớp 1</MenuItem>
+                  <MenuItem key={2} value={2}>Lớp 2</MenuItem>
+                  <MenuItem key={3} value={3}>Lớp 3</MenuItem>
+                  <MenuItem key={4} value={4}>Lớp 4</MenuItem>
+                  <MenuItem key={5} value={5}>Lớp 5</MenuItem>
+                </Select>
+              </FormControl>
+            </Filter>
+            <Filter>
+              <FormControl sx={{ width: "180px", marginTop: "10px" }}>
+                <InputLabel id="demo-simple-select-label">Lọc sách theo thể loại</InputLabel>
+                <Select
+                  name="cate"
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={age.cate}
                   MenuProps={{ disableScrollLock: true }}
                   label="Lọc sách theo thể loại"
                   onChange={handleChange}
@@ -141,24 +169,13 @@ const ProductList = ({ userRedux }) => {
             </Filter>
           </FilterContainer>
           {
-            // currentPost ?
             <>
               <Products setCart={setCart} books={currentPost} query={query} user={user} userRedux={userRedux} />
               <Pagination style={{ display: "flex", justifyContent: "center" }} count={Math.ceil(book.length / postPerPage)} page={currentPage} onChange={setPagination} size="large" />
             </>
-            // :
-            // <div className="centerimage" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-            //   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPdSkTpQc-Aq-hlCnND0fozOAOEROEZxFFAw&usqp=CAU" style={{ display: "inline-block" }}></img>
-            //   <div style={{ fontWeight: "bold", fontSize: "20px", color: "gray" }}>Không có sách nào được tìm thấy</div>
-            // </div>
           }
-
-          {/* <Pagination totalPost={book.length} postPerPage={postPerPage}/> */}
-          {/* <Newsletter /> */}
           <Footer />
         </Container>
-        // :
-        // <LoadingPage />
       }
     </div>
   );

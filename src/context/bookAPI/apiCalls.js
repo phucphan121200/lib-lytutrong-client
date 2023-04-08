@@ -26,8 +26,9 @@ export const getallBookClient = async (setNotify) => {
 }
 
 export const filterBookClient = async (data, setNotify) => {
+    console.log(data)
     try {
-        const res = await axios.get(BACK_END_URL + "/books/filterBookClient/" + data);
+        const res = await axios.post(BACK_END_URL + "/books/filterBookClient", data);
         return res;
     } catch (err) {
         setNotify({
