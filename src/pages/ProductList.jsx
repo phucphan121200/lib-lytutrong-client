@@ -86,7 +86,7 @@ const ProductList = ({ userRedux }) => {
 
   const handleChange = async (event) => {
     setcurrentPage(1);
-    setAge({grade: age.grade, cate: event.target.value });
+    setAge({ grade: age.grade, cate: event.target.value });
     setBook("")
     const book = await filterBookClient({ grade: age.grade, cate: event.target.value }, setNotify)
     setBook(book?.data?.data)
@@ -168,12 +168,8 @@ const ProductList = ({ userRedux }) => {
               </FormControl>
             </Filter>
           </FilterContainer>
-          {
-            <>
-              <Products setCart={setCart} books={currentPost} query={query} user={user} userRedux={userRedux} />
-              <Pagination style={{ display: "flex", justifyContent: "center" }} count={Math.ceil(book.length / postPerPage)} page={currentPage} onChange={setPagination} size="large" />
-            </>
-          }
+          <Products setCart={setCart} books={currentPost} query={query} user={user} userRedux={userRedux} />
+          <Pagination style={{ display: "flex", justifyContent: "center" }} count={Math.ceil(book?.length / postPerPage)} page={currentPage} onChange={setPagination} size="large" />
           <Footer />
         </Container>
       }
