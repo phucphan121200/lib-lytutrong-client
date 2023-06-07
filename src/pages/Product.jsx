@@ -145,6 +145,29 @@ const Button = styled.button`
   }
 `;
 
+const ButtonReading = styled.button`
+  position: relative;
+  margin-left: 30px;
+  padding: 20px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #F4A460;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: 0.5s ease;
+  &:active {
+    transform: scale(0.9)
+  }
+  &:hover {
+    background-color: #CD853F;
+  }
+`;
+
 const TextAddtoCart = styled.span`
   ${props => props.add ?
     "animation: text1 1.5s ease-in-out forwards;" : ""
@@ -322,25 +345,35 @@ const Product = ({ userRedux }) => {
                         <Amount>{quantity}</Amount>
                         <Add style={{ cursor: "pointer" }} onClick={() => handleQuantity("asc")} />
                       </AmountContainer>
-                      <Button
-                        onClick={async () => {
-                          setAdd(true);
-                          await addToCart(book._id, quantity, setNotify); const UserCart = await getUserCart(setNotify)
-                          setCart(UserCart?.data?.data?.cartItems)
-                          setTimeout(() => {
-                            setAdd(false)
-                          }, 3000)
-                        }}
-                      >
-                        <TextAddtoCart add={add}>THÊM VÀO TỦ SÁCH</TextAddtoCart>
-                        <TextAddDone add={add}>ĐÃ THÊM</TextAddDone>
-                        <IconCart add={add}>
-                          <ShoppingBasketIcon />
-                        </IconCart>
-                        <IconBook add={add}>
-                          <BookIcon style={{ fontSize: "15px" }} />
-                        </IconBook>
-                      </Button>
+                      {
+                        userRedux ?
+                          <Button
+                            onClick={async () => {
+                              setAdd(true);
+                              await addToCart(book._id, quantity, setNotify); const UserCart = await getUserCart(setNotify)
+                              setCart(UserCart?.data?.data?.cartItems)
+                              setTimeout(() => {
+                                setAdd(false)
+                              }, 3000)
+                            }}
+                          >
+                            <TextAddtoCart add={add}>THÊM VÀO TỦ SÁCH</TextAddtoCart>
+                            <TextAddDone add={add}>ĐÃ THÊM</TextAddDone>
+                            <IconCart add={add}>
+                              <ShoppingBasketIcon />
+                            </IconCart>
+                            <IconBook add={add}>
+                              <BookIcon style={{ fontSize: "15px" }} />
+                            </IconBook>
+                          </Button>
+                          :
+                          <Link to="/login" style={{ textDecoration: "none" }}>
+                            <Button>
+                              ĐĂNG NHẬP ĐỂ THÊM SÁCH!
+                            </Button>
+                          </Link>
+                      }
+                      {/* <ButtonReading> ĐỌC SÁCH ONLINE </ButtonReading> */}
                     </AddContainer>
                   </InfoContainer>
                 </Wrapper>

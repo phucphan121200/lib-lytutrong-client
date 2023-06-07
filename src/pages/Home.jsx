@@ -37,6 +37,9 @@ const Home = ({ userRedux }) => {
       const UserInfo = await getUser(dispatch, setNotify)
       setUser(UserInfo?.data?.data)
 
+      const bannerList = await getListBanner(setNotify)
+      setSlideItems(bannerList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
+
       const book = await getallBookClient(setNotify)
       setSearchBook(book?.data?.data)
       const arrayBook = [...book?.data?.data]
@@ -52,9 +55,6 @@ const Home = ({ userRedux }) => {
         setBook(array8length);
       }
 
-      const bannerList = await getListBanner(setNotify)
-      setSlideItems(bannerList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
-
       const cateList = await getListCategory(setNotify)
       getCategories(cateList?.data?.data.map((item, index) => ({ ...item, index: index + 1 })))
     })()
@@ -63,19 +63,12 @@ const Home = ({ userRedux }) => {
   return (
     <div>
       {
-        sliderItems && categories && book ?
+        sliderItems.length != 0 ?
           <>
-            < Navbar cart={cart} user={user} userRedux={userRedux} book={searchBook}/>
-            {/* <Announcement /> */}
-            {
-              sliderItems.length != 0 ?
-                <Slider sliderItems={sliderItems} />
-                :
-                <LoadingCircle />
-            }
-            <Categories categories={categories} />
-            <Products setCart={setCart} books={book} query="" user={user} userRedux={userRedux} />
-            {/* <Newsletter /> */}
+            < Navbar cart={cart} user={user} userRedux={userRedux} book={searchBook} />
+            <Slider sliderItems={sliderItems} />
+            <Categories categories={categories ? categories : ""} />
+            <Products setCart={setCart} books={book ? book : ""} query="" user={user} userRedux={userRedux} />
             <Footer />
           </>
           :
