@@ -373,7 +373,7 @@ const Product = ({ userRedux }) => {
                             </Button>
                           </Link>
                       }
-                      {/* <ButtonReading> ĐỌC SÁCH ONLINE </ButtonReading> */}
+                      {/* <ButtonReading> ĐỌC SÁCH </ButtonReading> */}
                     </AddContainer>
                   </InfoContainer>
                 </Wrapper>

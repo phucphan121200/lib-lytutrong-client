@@ -125,7 +125,7 @@ const Slider = ({ sliderItems }) => {
   };
 
   useEffect(async () => {
-    setInterval(() => { setSlideIndex(item => item < (sliderItems.length - 1) ? item + 1 : 0) }, 10000)
+    setInterval(() => { setSlideIndex(item => item < (sliderItems.length - 1) ? item + 1 : 0) }, 30000)
   }, [])
 
 
