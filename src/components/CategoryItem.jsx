@@ -60,7 +60,7 @@ const Container = styled.div`
   &:hover ${Info} {
     background-color: rgba(0, 0, 0, 0.6);
   }
-  &:hover ${Image}
+  &:hover ${Image} {
     transform: scale(1.2);
   }
 `;
