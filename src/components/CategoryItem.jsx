@@ -47,8 +47,8 @@ const Info = styled.div`
 `;
 
 const Container = styled.div`
-  flex: 1;
   margin: 5px;
+  width: calc(25% - 10px);
   height: 65vh;
   overflow: hidden;
   position: relative;
@@ -60,7 +60,7 @@ const Container = styled.div`
   &:hover ${Info} {
     background-color: rgba(0, 0, 0, 0.6);
   }
-  &:hover ${Image} {
+  &:hover ${Image}
     transform: scale(1.2);
   }
 `;
