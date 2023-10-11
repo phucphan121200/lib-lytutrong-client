@@ -14,7 +14,7 @@ import { AuthContext } from "../context/authAPI/AuthContext";
 import { addToCart } from "../context/cartAPI/apiCalls"
 import Notification from "./Notification";
 import { getUserCart } from "../context/cartAPI/apiCalls"
-import { scence_1 } from "../responsive";
+import { scence_1, mobile } from "../responsive";
 
 
 const Info = styled.div`
@@ -33,17 +33,17 @@ const Info = styled.div`
 `;
 
 const Image = styled.img`
-  height: 75%;
+  width: 50%;
+  aspect-ratio: 2 / 3;
   z-index: 2;
   object-fit: cover;
-  width: 55%;
   transition: all 0.3s ease;
 `;
 
 const Container = styled.div`
   margin: 10px;
   width: calc(25% - 20px);
-  height: 350px;
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,15 +54,18 @@ const Container = styled.div`
     opacity: 1;
   }
   &:hover ${Image}{
-    height: 85%;
-    width: 65%;
+    width: 60%;
   }
-  ${scence_1({ width: "307px" })}
+  ${scence_1({ width: "calc(25% - 20px)" })}
+  ${mobile({ 
+    width: "calc(50% - 20px)",
+    aspectRatio: "1 / 1"
+  })}
 `;
 
 const Circle = styled.div`
-  width: 200px;
-  height: 200px;
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
   border-radius: 50%;
   background-color: white;
   position: absolute;

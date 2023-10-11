@@ -36,11 +36,17 @@ const FilterContainer = styled.div`
   display: flex;
   justify-content: end;
   margin-top: 30px;
+  ${mobile({
+    justifyContent: "center",
+    alignItems: "center"
+  })}
 `;
 
 const Filter = styled.div`
   margin: 20px 20px 20px 0px;
-  ${mobile({ width: "0px 20px", display: "flex", flexDirection: "column" })}
+  ${mobile({
+    margin: "0px 10px 0px 10px"
+  })}
 `;
 
 const FilterText = styled.span`
@@ -121,7 +127,7 @@ const ProductList = ({ userRedux }) => {
           <Navbar cart={cart} user={user} userRedux={userRedux} book={book} />
           <FilterContainer>
             <Filter>
-              <FormControl sx={{ width: "180px", marginTop: "10px" }}>
+              <FormControl sx={{ width: "calc(100%)", marginTop: "10px" }}>
                 <InputLabel id="demo-simple-select-label">Lọc sách theo lớp</InputLabel>
                 <Select
                   name="grade"
@@ -142,7 +148,7 @@ const ProductList = ({ userRedux }) => {
               </FormControl>
             </Filter>
             <Filter>
-              <FormControl sx={{ width: "180px", marginTop: "10px" }}>
+              <FormControl sx={{ width: "calc(100%)", marginTop: "10px" }}>
                 <InputLabel id="demo-simple-select-label">Lọc sách theo thể loại</InputLabel>
                 <Select
                   name="cate"

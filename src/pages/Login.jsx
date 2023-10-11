@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { mobile } from "../responsive";
+import { mobile, tablet } from "../responsive";
 import React, { useState, useContext } from "react";
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
@@ -31,6 +31,7 @@ height: 100%;
 top: 0px;
 left: 0px;
 z-index: 1000;
+${mobile({ flexDirection: "column-reverse"})} ${tablet({ flexDirection: "column-reverse"})}
 `;
 
 const Wrapper = styled.div`
@@ -45,7 +46,16 @@ const Wrapper = styled.div`
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   border: none;
-  ${mobile({ width: "75%" })}
+  ${mobile({ width: "100%", 
+  borderRadius: "0px 0px 20px 20px", 
+  height: "auto",
+  paddingBottom: "35px",
+  boxShadow: "rgba(0, 0, 0, 0) 0px 0px 0px 0px" })}
+  ${tablet({ width: "60%", 
+  borderRadius: "0px 0px 20px 20px", 
+  height: "auto",
+  paddingBottom: "35px",
+  boxShadow: "rgba(0, 0, 0, 0) 0px 0px 0px 0px" })}
 `;
 
 const WrapperImg = styled.div`
@@ -55,13 +65,24 @@ const WrapperImg = styled.div`
   display: flex;
   border-radius: 0px 20px 20px 0px;
   justify-content: center;
-  // align-items: center;
+  //align-items: center;
   flex-direction: column;
   background-color: #2E8B57;
   // background-color: #8FD9D1;
-  box-shadow: rgba(0, 0, 0, 0.35) 10px 3px 20px 0px;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px;
   border: none;
-  ${mobile({ width: "75%" })}
+  ${mobile({ width: "100%",
+  height: "30%", 
+  objectFit: "cover", 
+  backgroundColor: "white", 
+  borderRadius: "20px 20px 0px 0px;",
+  alignItems: "center" })}
+  ${tablet({ width: "60%",
+  height: "20%", 
+  objectFit: "cover", 
+  backgroundColor: "white", 
+  borderRadius: "20px 20px 0px 0px;",
+  alignItems: "center" })}
 `;
 
 const Title = styled.h1`
@@ -69,6 +90,15 @@ const Title = styled.h1`
   font-weight: bold;
   // padding-bottom: 40px;
   margin: 80px 0px 0px 30px;
+  ${mobile({ margin: "20px 0px 0px 0px", 
+  display: "flex",
+  alignItems: "center", 
+  justifyContent: "center"})}
+  ${tablet({ margin: "20px 0px 0px 0px", 
+  display: "flex",
+  alignItems: "center", 
+  justifyContent: "center"})}
+
 `;
 
 const Form = styled.form`
@@ -78,8 +108,26 @@ const Form = styled.form`
   flex-direction: column;
   margin-top: 60px;
   justify-content: start;
+  ${mobile({
+    marginTop: "30px"
+  })}
+  ${tablet({
+    marginTop: "30px"
+  })}
 `;
 
+const Image = styled.img`
+${mobile({
+  height: "100%",
+  width: "50%",
+  objectFit: "cover",
+})}
+${tablet({
+  height: "100%",
+  width: "50%",
+  objectFit: "cover",
+})}
+`;
 const InputUI = styled.input`
   flex: 1;
   min-width: 40%;
@@ -172,7 +220,7 @@ const Login = () => {
   return (
     <Container>
       <Wrapper>
-        <Title>Chào mừng!</Title>
+        <Title>Đăng nhập</Title>
         <Form>
           <TextField
             // fullWidth
@@ -226,7 +274,7 @@ const Login = () => {
         </Form>
       </Wrapper>
       <WrapperImg>
-        <img src={login_1} alt="" />
+        <Image src={login_1}/>
       </WrapperImg>
       <Notification
         notify={notify}

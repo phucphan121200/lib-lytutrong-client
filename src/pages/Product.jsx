@@ -21,7 +21,7 @@ import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 const Container = styled.div``;
 
 const Wrapper = styled.div`
-  padding: 50px;
+  padding: 50px 10px;
   display: flex;
   ${mobile({ padding: "10px", flexDirection: "column" })}
 `;
@@ -34,13 +34,10 @@ const ImgContainer = styled.div`
 `;
 
 const Image = styled.img`
-  width: 50%;
-  height: 70vh;
+  width: 60%;
+  aspect-ratio: 2 / 3;
   object-fit: cover;
   
-  
-  
-  ${mobile({ height: "40vh" })}
 `;
 
 const InfoContainer = styled.div`

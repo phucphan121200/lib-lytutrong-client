@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { mobile } from "../responsive";
+import { mobile, tablet } from "../responsive";
 import { Link } from "react-router-dom";
 
 const Button = styled.button`
@@ -16,19 +16,22 @@ const Button = styled.button`
     &:hover{
       background-color: white;
       color: gray;
-
     }
+    ${mobile({
+      display: "none"
+    })}
+    ${tablet({
+      display: "none"
+    })}
 `;
 
 const Image = styled.img`
   width: 100%;
   height: 100%;
-  display: inline-block;
   object-fit: cover;
   transform: scale(1);
   transition: 0.4s ease-in-out;
-  ${mobile({ height: "20vh" })}
-
+  z-index: 2;
 `;
 
 const Info = styled.div`
@@ -46,10 +49,10 @@ const Info = styled.div`
   // justify-content: center;
 `;
 
-const Container = styled.div`
+const Container = styled(Link)`
   margin: 5px;
   width: calc(25% - 10px);
-  height: 65vh;
+  aspect-ratio: 2 / 3;
   overflow: hidden;
   position: relative;
   border-radius: 5px;
@@ -63,25 +66,42 @@ const Container = styled.div`
   &:hover ${Image} {
     transform: scale(1.2);
   }
+  ${mobile({
+    margin: "5px",
+    aspectRatio: "1 / 1"
+  })}
+  ${tablet({
+    margin: "5px",
+    aspectRatio: "1 / 1"
+  })}
 `;
 
 const Title = styled.h1`
     color:white;
     margin-bottom: 20px;
     transition: 0.5s ease-in-out;
-    margin-top: 50%;
+    margin-top: 60%;
+    font-size: 30px;
+    ${mobile({
+      marginTop: "45%",
+      fontSize: "10px",
+      marginBottom: "0px"
+    })}
+    ${tablet({
+      marginTop: "45%",
+      fontSize: "20px",
+      marginBottom: "0px"
+    })}
 `;
 
 
 const CategoryItem = ({ item }) => {
   return (
-    <Container>
+    <Container to="/books" state= {{item}} >
       <Image src={item.image} />
       <Info>
         <Title>{item.name}</Title>
-        <Link to="/books" state= {{item}} style={{ textDecoration: "none", color: "black" }} >
           <Button>CHI TIẾT</Button>
-        </Link>
       </Info>
     </Container>
   );

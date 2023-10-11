@@ -8,8 +8,7 @@ const Container = styled.div`
   padding: 20px;
   flex-wrap: wrap;
   justify-content: start;
-  ${mobile({ padding: "0px", flexDirection: "column" })}
-
+  ${mobile({ padding: "10px"})}
 `;
 
 const Categories = ({ categories }) => {

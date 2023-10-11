@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import Product from "./Product";
 import React, { useState, useEffect } from "react";
-import { getListBook, getallBookClient, filterBookClient } from "../context/bookAPI/apiCalls";
-import LoadingCircle from "./loadingCircle/LoadingCircle";
+import { mobile } from "../responsive";
 
 const Container = styled.div`
     padding: 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: start;
+    ${mobile({ padding: "5px"})}
 `;
 
 

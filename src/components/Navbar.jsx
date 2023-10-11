@@ -1,15 +1,12 @@
 import { Badge } from "@mui/material";
-import { Search, ShoppingCartOutlined } from "@material-ui/icons";
 import React, { useContext, useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { mobile } from "../responsive";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authAPI/AuthContext";
 import { logoutAdmin } from "../context/authAPI/apiCalls"
-import LogoutIcon from '@mui/icons-material/Logout';
 import { Tooltip } from "@mui/material"
-import SettingsIcon from '@mui/icons-material/Settings';
-import { logout } from "../context/authAPI/AuthAction";
+import LoginIcon from '@mui/icons-material/Login';
+import { mobile, tablet } from "../responsive";
 import Notification from "./Notification"
 import PopupUserInfo from "./popup/PopupUserInfo";
 import Avatar from '@mui/material/Avatar';
@@ -75,8 +72,11 @@ const SearchContainer = styled.div`
   border: 0.5px solid lightgray;
   display: flex;
   align-items: center;
-  margin-left: 25px;
+  margin-left: 20px;
   padding: 5px;
+  ${mobile({
+    marginLeft: "20px"
+  })}
 `;
 
 const Input = styled.input`
@@ -87,6 +87,9 @@ const Input = styled.input`
 const Center = styled.div`
   flex: 1;
   text-align: center;
+  ${mobile({
+    display: props => props.open ? "none" : "block"
+  })}
 `;
 
 const Logo = styled.h1`
@@ -99,7 +102,9 @@ const Right = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  ${mobile({ flex: 2, justifyContent: "center" })}
+  ${mobile({
+    display: props => props.open ? "none" : "flex"
+  })}
 `;
 
 const Options = styled.div`
@@ -122,13 +127,45 @@ const Item = styled.div`
   }
 `;
 
-const MenuItemNav = styled.div`
+const MenuItemNav = styled(Link)`
+  text-decoration: none;
   font-size: 14px;
-  margin-left: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  ${mobile({ fontSize: "12px", marginLeft: "10px" })}
+  margin-right: 20px;
+  ${mobile({
+    marginRight: "10px"
+  })}
+`;
+
+const LoginText = styled(Link)`
+  text-decoration: none;
+  font-size: 14px;
+  margin-right: 20px;
+  font-weight: bold;
+  color: black;
+  ${mobile({
+    display: "none"
+  })}
+  ${tablet({
+    display: "none"
+  })}
+`;
+
+const LoginButton = styled(Link)`
+  display: none;
+  ${mobile({
+    display: "flex",
+    textDecoration: "none",
+    fontSize: "14px",
+    marginRight: "5px",
+    color: "gray"
+  })}
+  ${tablet({
+    display: "flex",
+    textDecoration: "none",
+    fontSize: "14px",
+    marginRight: "20px",
+    color: "gray"
+  })}
 `;
 
 const Cart = styled.div`
@@ -144,7 +181,6 @@ const Cart = styled.div`
 `;
 const Hover = styled.div`
   display: flex;
-  margin-right: 10px;
   align-items: center;
   justify-content: center;
   width: 45px;
@@ -164,7 +200,10 @@ const Searchbox = styled.div`
   margin-left: 20px;
   display: flex;
   position: relative;
-  width: ${props => props.open ? "430px" : "35px"};
+  ${mobile({
+    width: props => props.open ? "calc(100vw - 40px)" : "35px"
+  })}
+  width: ${props => props.open ? "calc(100vw - 70vw)" : "35px"};
   // background: ${props => props.open ? "#ffffff" : "#DEDEDE"};
   border-radius: 35px;
   // box-shadow: 0 0 0 5px #F7F7F7;
@@ -196,11 +235,17 @@ const Searchbox = styled.div`
     :
     ""
   }
+  ${mobile({
+    marginLeft: "10px"
+  })}
 `;
 
 const InputSearch = styled.div`
   position: absolute;
-  ${props => props.open ? "width: 350px;" : "width: 0px;"}
+  ${mobile({
+    width: props => props.open ? "calc(100vw - 90px)" : "0px"
+  })}
+  ${props => props.open ? "width: calc(100vw - 80vw)" : "width: 0px"};
   height: 35px;
   transition: 0.35s;
   left: 40px;
@@ -219,8 +264,11 @@ const InputSearch = styled.div`
 `;
 const MenuBook = styled.div`
   position: absolute;
+  ${mobile({
+    width: props => props.open ? "calc(100vw - 40px)" : "35px"
+  })}
   ${props => props.open && props.search.length > 0 ?
-    `width: 430px;
+    `width: calc(100vw - 70vw);
     opacity: 1;`
     :
     `width: 0px;
@@ -236,13 +284,21 @@ const MenuBook = styled.div`
   background: #ffffff;
   box-shadow: 0 0 0 2.5px #dedede;
 `;
-const MenuItemSearch = styled.div`
+const MenuItemSearch = styled(Link)`
+  text-decoration: none;
+  color: black;
   margin: 5px 5px 5px 5px;
   width: calc(100% - 10px);
   height: 15vh;
   background: #F7F7F7;
   border-radius: 2px;
   display: flex;
+  ${mobile({
+    height: "10vh"
+  })}
+  ${tablet({
+    height: "6vh"
+  })}
 `;
 const ImageSearch = styled.img`
   margin-left: 2.5px;
@@ -302,13 +358,13 @@ const length = (book, search) => {
   const listBook = book.filter((books) => books.name.toLowerCase().includes(search.toLowerCase()));
   if (listBook.length > 0) {
     return listBook.slice(0, 5).map((item) => (
-      <MenuItemSearch >
+      <MenuItemSearch to={"/books/" + item._id} state={item._id} >
         <ImageSearch src={item.image} />
         <MenuItemInfo>
           <MenuItemName>
-            <Link to={"/books/" + item._id} state={item._id} style={{ textDecoration: "none", color: "black" }}>
+            
               {item.name}
-            </Link>
+            
           </MenuItemName>
           <MenuItemTranslator>
             {item.translator}
@@ -352,7 +408,6 @@ const Navbar = ({ cart, user, userRedux, book }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  console.log(userRedux)
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -371,7 +426,7 @@ const Navbar = ({ cart, user, userRedux, book }) => {
   let domNode = useClickOutSide(() => {
     setActiveSearch(false)
   })
-  console.log(user)
+
   return (
     <>
       <Container>
@@ -420,7 +475,7 @@ const Navbar = ({ cart, user, userRedux, book }) => {
             </Searchbox>
 
           </Left>
-          <Center>
+          <Center open={activeSearch}>
             <Tooltip title="Trang chủ thư viện" placement="right" >
               <Link to="/" style={{ textDecoration: "none", color: "black" }}>
                 <img
@@ -430,7 +485,7 @@ const Navbar = ({ cart, user, userRedux, book }) => {
               </Link>
             </Tooltip>
           </Center>
-          <Right>
+          <Right open={activeSearch}>
             {
               userRedux ?
                 <>
@@ -448,16 +503,18 @@ const Navbar = ({ cart, user, userRedux, book }) => {
                     </Link>
                   </MenuItemNav>
                   <Tooltip title="Tài khoản">
+                  <MenuItemNav>
                     <IconButton
                       onClick={handleClick}
                       size="small"
-                      sx={{ mr: "20px", transition: "0.5s" }}
+                      sx={{ transition: "0.5s" }}
                       aria-controls={open ? 'account-menu' : undefined}
                       aria-haspopup="true"
                       aria-expanded={open ? 'true' : undefined}
                     >
                       <Avatar sx={{ width: 35, height: 35 }} src={user ? user.image : ""}></Avatar>
                     </IconButton>
+                    </MenuItemNav>
                   </Tooltip>
                   <Menu
                     anchorEl={anchorEl}
@@ -527,13 +584,14 @@ const Navbar = ({ cart, user, userRedux, book }) => {
                   </Menu>
                 </>
                 :
-                <Link to="/login" style={{ textDecoration: "none" }}>
-                  <MenuItemNav style={{ marginRight: "35px", fontWeight: "bold", color: "black" }}
-                  // onClick={async () => {
-                  //   setModalLogin(true)
-                  // }}
-                  >Đăng nhập</MenuItemNav>
-                </Link>
+                <>
+                  <LoginText to="/login" >Đăng nhập</LoginText>
+                  <LoginButton to="/login" >
+                      <Hover>
+                        <Cart><LoginIcon /></Cart>
+                      </Hover>
+                  </LoginButton>
+                  </>
             }
           </Right>
         </Wrapper>
