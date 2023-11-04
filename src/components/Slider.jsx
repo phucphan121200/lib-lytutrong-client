@@ -6,7 +6,7 @@ import { mobile, tablet } from "../responsive";
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   margin-top: 30px;
   display: flex;
   position: relative;
@@ -77,7 +77,7 @@ const ImgContainer = styled.div`
 const Image = styled.img`
   margin-top: 30px;
   margin-left: 20px;
-  height: 100vh;
+  height: 70vh;
   width: calc(50vw - 20px);
   object-fit: cover;
   ${mobile({
